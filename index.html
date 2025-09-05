@@ -10,10 +10,6 @@
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- EmailJS (v2 for wider browser support) -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
-
-
   <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -86,7 +82,6 @@ if ('serviceWorker' in navigator) {
   <div id="listaHistorico" class="lista"></div>
   <button id="exportBtn" onclick="exportarCSV()">Exportar CSV</button>
   <button onclick="exportarPDF()">Exportar PDF</button>
-  <button onclick="enviarPDFManual()">Enviar por e-mail</button>
 </div>
 
 <!-- scripts separados -->
@@ -96,7 +91,6 @@ if ('serviceWorker' in navigator) {
 <script src="js/autorizados.js"></script>
 <script src="js/historico.js"></script>
 <script src="js/placas.js"></script>
-<script src="js/email.js"></script>
 <script src="js/init.js"></script>
 </body>
 </html>
