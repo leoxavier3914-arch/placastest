@@ -1,5 +1,5 @@
 // ===== Envio de e-mails =====
-const EMAILJS_PUBLIC_KEY = "vPVpXFO3k8QblVbqr";
+
 
 function enviarPDFManual() {
   const dataFiltro = document.getElementById("dataFiltro").value;
@@ -29,7 +29,6 @@ function enviarPDFManual() {
   });
 
 
-  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
 
   emailjs.send(
     "service_t9bocqh",
@@ -39,7 +38,6 @@ function enviarPDFManual() {
       title: `Histórico Diário - ${dataTexto}`,
       name: "Sistema de Placas",
       message: `Histórico de Placas - ${dataTexto}`,
-      attachments: [
 
   ).then(() => {
     alert("📧 Histórico enviado manualmente com sucesso!");
@@ -78,7 +76,6 @@ function enviarHistoricoDiario() {
       message: mensagem,
       title: "Histórico Diário",
       name: "Sistema de Placas"
-    },
 
   ).then(() => {
     console.log("✅ Histórico do dia enviado por e-mail.");

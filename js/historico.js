@@ -60,7 +60,7 @@ function exportarPDF() {
     alert("Biblioteca jsPDF não carregada!");
     return;
   }
- 
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(14);
