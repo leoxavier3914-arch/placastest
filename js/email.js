@@ -2,7 +2,7 @@
 const EMAILJS_PUBLIC_KEY = "vPVpXFO3k8QblVbqr";
 
 // Initialize EmailJS with the correct public key
-emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
 
 function enviarPDFManual() {
   const dataFiltro = document.getElementById("dataFiltro").value;
