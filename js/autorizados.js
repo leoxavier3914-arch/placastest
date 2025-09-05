@@ -16,7 +16,8 @@ function adicionarAutorizado() {
   if (!nome || !placa || !rgcpf) { alert("Preencha todos os campos!"); return; }
   bancoAutorizados.push({ nome, placa, rgcpf });
   salvarBanco();
-  atualizarAutorizados();
+  // reaplica o filtro atual após adicionar
+  pesquisarAutorizados();
   document.getElementById("nomeAutInput").value = "";
   document.getElementById("placaAutInput").value = "";
   document.getElementById("rgcpfAutInput").value = "";
@@ -80,7 +81,8 @@ function confirmarEdicaoAut(index) {
   if (!nome || !placa || !rgcpf) { alert("Preencha todos os campos!"); return; }
   bancoAutorizados[index] = { nome, placa, rgcpf };
   salvarBanco();
-  atualizarAutorizados();
+  // mantém resultados filtrados
+  pesquisarAutorizados();
   fecharPopup();
   alert("Autorizado editado com sucesso!");
   const itens = document.querySelectorAll("#listaAutorizados .item");
@@ -98,12 +100,27 @@ function iniciarExclusaoAut() {
     bancoAutorizados.splice(index, 1);
     autorizadoSelecionado = null;
     salvarBanco();
-    atualizarAutorizados();
+    // atualiza lista conforme termo pesquisado
+    pesquisarAutorizados();
     alert("Autorizado excluído com sucesso!");
   }
 }
 
 function pesquisarAutorizados() {
+
+  const campo = document.getElementById("pesquisaAut");
+  const termo = campo ? campo.value : "";
+  atualizarAutorizados(termo);
+}
+
+// garante que o campo de busca esteja pronto antes de anexar o evento
+document.addEventListener("DOMContentLoaded", () => {
+  const campoPesquisa = document.getElementById("pesquisaAut");
+  if (campoPesquisa) {
+    campoPesquisa.addEventListener("input", pesquisarAutorizados);
+  }
+});
+=======
   const termo = document.getElementById("pesquisaAut")?.value || "";
   atualizarAutorizados(termo);
 }
@@ -120,3 +137,4 @@ window.selecionarAutorizado = selecionarAutorizado;
 window.iniciarEdicaoAut = iniciarEdicaoAut;
 window.confirmarEdicaoAut = confirmarEdicaoAut;
 window.iniciarExclusaoAut = iniciarExclusaoAut;
+window.pesquisarAutorizados = pesquisarAutorizados;
