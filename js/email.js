@@ -17,8 +17,6 @@ function enviarPDFManual() {
   }
   const { jsPDF } = window.jspdf;
 
-  
-const doc = new jsPDF();
 
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
@@ -31,7 +29,6 @@ const doc = new jsPDF();
   });
 
 
-  const pdfData = doc.output("datauristring");
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
 
   emailjs.send(
@@ -43,9 +40,6 @@ const doc = new jsPDF();
       name: "Sistema de Placas",
       message: `Histórico de Placas - ${dataTexto}`,
       attachments: [
-        { name: nomeArquivo, data: pdfData }
-      ]
-    }
 
   ).then(() => {
     alert("📧 Histórico enviado manualmente com sucesso!");
