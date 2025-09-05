@@ -122,25 +122,23 @@ function exportarPDF() {
   }
 }
 
+
 function enviarEmail() {
   const dataFiltro = document.getElementById("dataFiltro").value;
   const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
   const registros = bancoHistorico.filter(item => item.data === dataTexto);
   if (registros.length === 0) { alert("Nenhum dado para enviar."); return; }
 
-  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
+
   const doc = gerarRelatorioPDF(registros, dataTexto);
   if (!doc) return;
-  const pdfBase64 = doc.output("datauristring").split(",")[1];
+  const pdfDataUri = doc.output("datauristring");
 
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-    to_email: "leomatos3914@gmail.com",
-    attachments: [
-      {
-        name: nomeArquivo,
-        data: pdfBase64
-      }
-    ]
+    to_email: "leomato3914@gmail.com",
+    message: "TESTE",
+    attachment: pdfDataUri
+   
   }).then(() => {
     alert("PDF enviado com sucesso!");
   }).catch(err => {
@@ -256,5 +254,8 @@ window.converterDataInput = converterDataInput;
 window.filtrarHistorico = filtrarHistorico;
 window.exportarCSV = exportarCSV;
 window.exportarPDF = exportarPDF;
+
+
 window.enviarEmail = enviarEmail;
+
 window.checarExportacaoAutomaticaPDF = checarExportacaoAutomaticaPDF;

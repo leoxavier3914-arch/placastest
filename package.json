@@ -1,0 +1,9 @@
+{
+  "name": "placastest",
+  "version": "1.0.0",
+  "description": "Controle de Placas",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
