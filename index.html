@@ -13,6 +13,8 @@
   <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(() => {
@@ -83,6 +85,7 @@ if ('serviceWorker' in navigator) {
   <div id="listaHistorico" class="lista"></div>
   <button id="exportBtn" onclick="exportarCSV()">Exportar CSV</button>
   <button onclick="exportarPDF()">Exportar PDF</button>
+  <button onclick="enviarPDF()">Enviar PDF</button>
 </div>
 
 <!-- scripts separados -->
