@@ -50,12 +50,7 @@ function exportarCSV() {
   alert("Exportado com sucesso!");
 }
 
-function exportarPDF() {
-  const dataFiltro = document.getElementById("dataFiltro").value;
-  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
-  const registros = bancoHistorico.filter(item => item.data === dataTexto);
-  if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
-
+function gerarRelatorioPDF(registros, dataRelatorio, nomeArquivo) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
     return;
@@ -63,18 +58,56 @@ function exportarPDF() {
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  doc.setFontSize(14);
-  doc.text("Histórico de Placas", 105, 15, null, null, "center");
-  let y = 25;
-  doc.setFontSize(12);
-  registros.forEach(item => {
-    doc.text(`Placa: ${item.placa} | Nome: ${item.nome} | Tipo: ${item.tipo} | RG/CPF: ${item.rgcpf} | Status: ${item.status} | Entrada: ${item.horarioEntrada || '-'} | Saída: ${item.horarioSaida || '-'}`, 10, y);
-    y += 8;
-    if (y > 280) { doc.addPage(); y = 20; }
-  });
-  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
-  doc.save(nomeArquivo);
+  const pageWidth = doc.internal.pageSize.getWidth();
 
+  const linhas = registros.map(item => [
+    item.placa,
+    item.nome,
+    item.tipo,
+    item.rgcpf,
+    item.status,
+    item.horarioEntrada || '-',
+    item.horarioSaida || '-'
+  ]);
+
+  doc.autoTable({
+    head: [["Placa", "Nome", "Tipo", "RG/CPF", "Status", "Entrada", "Saída"]],
+    body: linhas,
+    startY: 30,
+    margin: { top: 30, left: 10, right: 10 },
+    styles: { fontSize: 10 },
+    columnStyles: {
+      0: { cellWidth: 20 },
+      1: { cellWidth: 35 },
+      2: { cellWidth: 20 },
+      3: { cellWidth: 30 },
+      4: { cellWidth: 20 },
+      5: { cellWidth: 25 },
+      6: { cellWidth: 25 }
+    },
+    didDrawPage: (data) => {
+      doc.setFontSize(16);
+      doc.text("Empresa XYZ", pageWidth / 2, 15, { align: "center" });
+      doc.setFontSize(12);
+      doc.text(`Data do relatório: ${dataRelatorio}`, pageWidth / 2, 22, { align: "center" });
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const pageNumber = doc.internal.getCurrentPageInfo().pageNumber;
+      doc.setFontSize(10);
+      doc.text(`Página ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+    }
+  });
+
+  doc.save(nomeArquivo);
+}
+
+function exportarPDF() {
+  const dataFiltro = document.getElementById("dataFiltro").value;
+  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
+  const registros = bancoHistorico.filter(item => item.data === dataTexto);
+  if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
+
+  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
+  gerarRelatorioPDF(registros, dataTexto, nomeArquivo);
   alert("Exportado com sucesso!");
 }
 
@@ -94,19 +127,8 @@ function checarExportacaoAutomaticaPDF() {
     return dataItem > dataInicio;
   });
   if (historicoFiltrado.length === 0) return;
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(14);
-  doc.text("Histórico de Placas", 105, 15, null, null, "center");
-  let y = 25;
-  doc.setFontSize(12);
-  historicoFiltrado.forEach(item => {
-    doc.text(`Placa: ${item.placa} | Nome: ${item.nome} | Tipo: ${item.tipo} | RG/CPF: ${item.rgcpf} | Data: ${item.data} | Status: ${item.status}`, 10, y);
-    y += 8;
-    if (y > 280) { doc.addPage(); y = 20; }
-  });
   const dataHoje = new Date().toISOString().split("T")[0];
-  doc.save(`historico-${dataHoje}.pdf`);
+  gerarRelatorioPDF(historicoFiltrado, formatarData(new Date()), `historico-${dataHoje}.pdf`);
   localStorage.setItem("ultimaExportacao", agora.toISOString());
   console.log("Exportação automática em PDF realizada!");
 }
