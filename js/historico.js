@@ -43,29 +43,31 @@ function exportarCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `historico-${dataTexto}.csv`;
+  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.csv`;
+  a.download = nomeArquivo;
   a.click();
   URL.revokeObjectURL(url);
   alert("Exportado com sucesso!");
 }
 
 function exportarPDF() {
+  const dataFiltro = document.getElementById("dataFiltro").value;
+  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
+  const registros = bancoHistorico.filter(item => item.data === dataTexto);
+  if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
-  const tabela = document.getElementById("listaHistorico");
-  if (tabela.innerHTML.trim() === "") { alert("Não há dados para exportar!"); return; }
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
-  let y = 20;
-  const rows = tabela.querySelectorAll(".item");
-  rows.forEach((row) => {
-    doc.setFontSize(12);
-    doc.text(row.innerText.split("\n").join(" | "), 10, y);
+  let y = 25;
+  doc.setFontSize(12);
+  registros.forEach(item => {
+    doc.text(`Placa: ${item.placa} | Nome: ${item.nome} | Tipo: ${item.tipo} | RG/CPF: ${item.rgcpf} | Status: ${item.status} | Entrada: ${item.horarioEntrada || '-'} | Saída: ${item.horarioSaida || '-'}`, 10, y);
     y += 8;
     if (y > 280) { doc.addPage(); y = 20; }
   });
-  const dataHoje = new Date().toISOString().split("T")[0];
-  doc.save(`historico-${dataHoje}.pdf`);
+  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
+  doc.save(nomeArquivo);
 }
 
 function checarExportacaoAutomaticaPDF() {
