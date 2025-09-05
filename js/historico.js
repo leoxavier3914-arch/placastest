@@ -50,7 +50,16 @@ function exportarCSV() {
   alert("Exportado com sucesso!");
 }
 
-function gerarRelatorioPDF(registros, dataRelatorio, nomeArquivo) {
+// Configurações do EmailJS
+const EMAILJS_SERVICE_ID = "service_t9bocqh";
+const EMAILJS_TEMPLATE_ID = "template_n4uw7xi";
+const EMAILJS_PUBLIC_KEY = "vPVpXFO3k8QblVbqr";
+
+if (window.emailjs) {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
+function gerarRelatorioPDF(registros, dataRelatorio) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
     return;
@@ -96,8 +105,7 @@ function gerarRelatorioPDF(registros, dataRelatorio, nomeArquivo) {
       doc.text(`Página ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: "center" });
     }
   });
-
-  doc.save(nomeArquivo);
+  return doc;
 }
 
 function exportarPDF() {
@@ -107,8 +115,38 @@ function exportarPDF() {
   if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
 
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
-  gerarRelatorioPDF(registros, dataTexto, nomeArquivo);
-  alert("Exportado com sucesso!");
+  const doc = gerarRelatorioPDF(registros, dataTexto);
+  if (doc) {
+    doc.save(nomeArquivo);
+    alert("Exportado com sucesso!");
+  }
+}
+
+function enviarEmail() {
+  const dataFiltro = document.getElementById("dataFiltro").value;
+  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
+  const registros = bancoHistorico.filter(item => item.data === dataTexto);
+  if (registros.length === 0) { alert("Nenhum dado para enviar."); return; }
+
+  const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
+  const doc = gerarRelatorioPDF(registros, dataTexto);
+  if (!doc) return;
+  const pdfBase64 = doc.output("datauristring").split(",")[1];
+
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: "leomato3914@gmail.com",
+    attachments: [
+      {
+        name: nomeArquivo,
+        data: pdfBase64
+      }
+    ]
+  }).then(() => {
+    alert("PDF enviado com sucesso!");
+  }).catch(err => {
+    console.error("Erro ao enviar PDF:", err);
+    alert("Falha ao enviar o PDF.");
+  });
 }
 
 function checarExportacaoAutomaticaPDF() {
@@ -128,7 +166,10 @@ function checarExportacaoAutomaticaPDF() {
   });
   if (historicoFiltrado.length === 0) return;
   const dataHoje = new Date().toISOString().split("T")[0];
-  gerarRelatorioPDF(historicoFiltrado, formatarData(new Date()), `historico-${dataHoje}.pdf`);
+  const doc = gerarRelatorioPDF(historicoFiltrado, formatarData(new Date()));
+  if (doc) {
+    doc.save(`historico-${dataHoje}.pdf`);
+  }
   localStorage.setItem("ultimaExportacao", agora.toISOString());
   console.log("Exportação automática em PDF realizada!");
 }
@@ -215,4 +256,5 @@ window.converterDataInput = converterDataInput;
 window.filtrarHistorico = filtrarHistorico;
 window.exportarCSV = exportarCSV;
 window.exportarPDF = exportarPDF;
+window.enviarEmail = enviarEmail;
 window.checarExportacaoAutomaticaPDF = checarExportacaoAutomaticaPDF;
