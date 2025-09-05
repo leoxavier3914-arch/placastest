@@ -1,4 +1,6 @@
 // ===== Envio de e-mails =====
+const EMAILJS_PUBLIC_KEY = "vPVpXFO3k8QblVbqr";
+
 function enviarPDFManual() {
   const dataFiltro = document.getElementById("dataFiltro").value;
   const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
@@ -15,9 +17,9 @@ function enviarPDFManual() {
   }
   const { jsPDF } = window.jspdf;
 
-
   
 const doc = new jsPDF();
+
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
   let y = 25;
@@ -27,8 +29,6 @@ const doc = new jsPDF();
     y += 8;
     if (y > 280) { doc.addPage(); y = 20; }
   });
-
-
 
 
   const pdfData = doc.output("datauristring");
@@ -41,16 +41,12 @@ const doc = new jsPDF();
       to_email: "leomatos3914@gmail.com",
       title: `Histórico Diário - ${dataTexto}`,
       name: "Sistema de Placas",
-
-
-      message: `Histórico de Placas - ${dataTexto}`
-    },
-    {
-
+      message: `Histórico de Placas - ${dataTexto}`,
       attachments: [
         { name: nomeArquivo, data: pdfData }
       ]
     }
+
   ).then(() => {
     alert("📧 Histórico enviado manualmente com sucesso!");
   }).catch(err => {
@@ -80,12 +76,17 @@ function enviarHistoricoDiario() {
   filtered.forEach(item => {
     mensagem += `🚗 Placa: ${item.placa} | 👤 Nome: ${item.nome} | 🏷 Tipo: ${item.tipo} | 🆔 RG/CPF: ${item.rgcpf} | 📍 Status:${item.status} | ⏰ Entrada: ${item.horarioEntrada || "-"} | ⏱ Saída: ${item.horarioSaida || "-"}\n`;
   });
-  emailjs.send("service_t9bocqh", "template_n4uw7xi", {
-    to_email: "leomatos3914@gmail.com",
-    message: mensagem,
-    title: "Histórico Diário",
-    name: "Sistema de Placas"
-  }).then(() => {
+  emailjs.send(
+    "service_t9bocqh",
+    "template_n4uw7xi",
+    {
+      to_email: "leomatos3914@gmail.com",
+      message: mensagem,
+      title: "Histórico Diário",
+      name: "Sistema de Placas"
+    },
+
+  ).then(() => {
     console.log("✅ Histórico do dia enviado por e-mail.");
     marcarEnvio();
   }).catch(err => {

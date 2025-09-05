@@ -75,7 +75,6 @@ function exportarPDF() {
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
   doc.save(nomeArquivo);
 
-
   alert("Exportado com sucesso!");
 }
 
