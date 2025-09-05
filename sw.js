@@ -1,7 +1,20 @@
-self.addEventListener('install', (e) => {
-  console.log('Service Worker instalado!');
+const CACHE_NAME = 'placas-cache-v1';
+const URLS_TO_CACHE = [
+  '/',
+  'index.html',
+  'css/style.css',
+  'assets/Icone.png',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(URLS_TO_CACHE))
+  );
 });
 
-self.addEventListener('fetch', function(event) {
-  // Aqui você pode controlar cache de arquivos se quiser offline
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => response || fetch(event.request))
+  );
 });
+
