@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     campoPesquisa.addEventListener("input", pesquisarAutorizados);
   }
 });
-=======
+
   const termo = document.getElementById("pesquisaAut")?.value || "";
   atualizarAutorizados(termo);
 }
