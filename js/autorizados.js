@@ -107,6 +107,7 @@ function iniciarExclusaoAut() {
 }
 
 function pesquisarAutorizados() {
+
   const campo = document.getElementById("pesquisaAut");
   const termo = campo ? campo.value : "";
   atualizarAutorizados(termo);
@@ -119,6 +120,15 @@ document.addEventListener("DOMContentLoaded", () => {
     campoPesquisa.addEventListener("input", pesquisarAutorizados);
   }
 });
+=======
+  const termo = document.getElementById("pesquisaAut")?.value || "";
+  atualizarAutorizados(termo);
+}
+
+const campoPesquisa = document.getElementById("pesquisaAut");
+if (campoPesquisa) {
+  campoPesquisa.addEventListener("input", pesquisarAutorizados);
+}
 
 // Expondo globalmente
 window.adicionarAutorizado = adicionarAutorizado;
