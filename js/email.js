@@ -7,8 +7,17 @@ function enviarPDFManual() {
     alert("Nenhum histórico encontrado para a data selecionada!");
     return;
   }
+
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("Biblioteca jsPDF não carregada!");
+    return;
+  }
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+
+
+  
+const doc = new jsPDF();
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
   let y = 25;
@@ -18,8 +27,13 @@ function enviarPDFManual() {
     y += 8;
     if (y > 280) { doc.addPage(); y = 20; }
   });
+
+
+
+
   const pdfData = doc.output("datauristring");
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
+
   emailjs.send(
     "service_t9bocqh",
     "template_n4uw7xi",
@@ -27,9 +41,12 @@ function enviarPDFManual() {
       to_email: "leomatos3914@gmail.com",
       title: `Histórico Diário - ${dataTexto}`,
       name: "Sistema de Placas",
+
+
       message: `Histórico de Placas - ${dataTexto}`
     },
     {
+
       attachments: [
         { name: nomeArquivo, data: pdfData }
       ]
