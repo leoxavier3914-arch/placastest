@@ -134,7 +134,7 @@ function enviarEmail() {
   const pdfBase64 = doc.output("datauristring").split(",")[1];
 
   emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-    to_email: "leomato3914@gmail.com",
+    to_email: "leomatos3914@gmail.com",
     attachments: [
       {
         name: nomeArquivo,
