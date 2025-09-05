@@ -55,10 +55,12 @@ function exportarPDF() {
   const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
   const registros = bancoHistorico.filter(item => item.data === dataTexto);
   if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
+
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
     return;
   }
+
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   doc.setFontSize(14);
@@ -72,6 +74,7 @@ function exportarPDF() {
   });
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
   doc.save(nomeArquivo);
+
   alert("Exportado com sucesso!");
 }
 

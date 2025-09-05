@@ -1,7 +1,5 @@
 // ===== Envio de e-mails =====
-const EMAILJS_PUBLIC_KEY = "vPVpKP3k8QbXQbqr"; // substitua pela sua Public Key
 
-emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 function enviarPDFManual() {
   const dataFiltro = document.getElementById("dataFiltro").value;
@@ -12,13 +10,14 @@ function enviarPDFManual() {
     return;
   }
 
+
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
     return;
   }
   const { jsPDF } = window.jspdf;
 
-  const doc = new jsPDF();
+
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
   let y = 25;
@@ -29,7 +28,7 @@ function enviarPDFManual() {
     if (y > 280) { doc.addPage(); y = 20; }
   });
 
-  const pdfDataUri = doc.output("datauristring");
+
 
   emailjs.send(
     "service_t9bocqh",
@@ -39,8 +38,7 @@ function enviarPDFManual() {
       title: `Histórico Diário - ${dataTexto}`,
       name: "Sistema de Placas",
       message: `Histórico de Placas - ${dataTexto}`,
-      attachment: pdfDataUri
-    }
+
   ).then(() => {
     alert("📧 Histórico enviado manualmente com sucesso!");
   }).catch(err => {
@@ -78,7 +76,7 @@ function enviarHistoricoDiario() {
       message: mensagem,
       title: "Histórico Diário",
       name: "Sistema de Placas"
-    }
+
   ).then(() => {
     console.log("✅ Histórico do dia enviado por e-mail.");
     marcarEnvio();
@@ -103,3 +101,4 @@ setInterval(() => {
 
 // Expondo globalmente
 window.enviarPDFManual = enviarPDFManual;
+
