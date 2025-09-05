@@ -10,13 +10,14 @@ function enviarPDFManual() {
     return;
   }
 
+
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
     return;
   }
   const { jsPDF } = window.jspdf;
 
-  const doc = new jsPDF();
+
   doc.setFontSize(14);
   doc.text("Histórico de Placas", 105, 15, null, null, "center");
   let y = 25;
@@ -27,7 +28,7 @@ function enviarPDFManual() {
     if (y > 280) { doc.addPage(); y = 20; }
   });
 
-  const pdfBase64 = doc.output("datauristring").split(",")[1];
+
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
 
   emailjs.send(
@@ -39,10 +40,7 @@ function enviarPDFManual() {
       name: "Sistema de Placas",
       message: `Histórico de Placas - ${dataTexto}`,
       attachments: [
-        { name: nomeArquivo, data: pdfBase64 }
-      ]
-    },
-    EMAILJS_PUBLIC_KEY
+
   ).then(() => {
     alert("📧 Histórico enviado manualmente com sucesso!");
   }).catch(err => {
@@ -81,7 +79,7 @@ function enviarHistoricoDiario() {
       title: "Histórico Diário",
       name: "Sistema de Placas"
     },
-    EMAILJS_PUBLIC_KEY
+
   ).then(() => {
     console.log("✅ Histórico do dia enviado por e-mail.");
     marcarEnvio();
@@ -106,3 +104,4 @@ setInterval(() => {
 
 // Expondo globalmente
 window.enviarPDFManual = enviarPDFManual;
+
