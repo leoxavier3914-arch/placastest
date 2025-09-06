@@ -3,27 +3,90 @@ let autorizadoSelecionado = null;
 
 // Normaliza texto removendo acentos e ignorando maiúsculas/minúsculas
 function normalizarTexto(texto) {
-  return texto
+  return (texto || "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+    .toLowerCase()
+    .trim();
 }
 
+/* 
+  Espera que exista um array/LS chamado bancoAutorizados
+  no seu db.js (ou similar), no formato:
+  [{ nome: "Fulano", placa: "ABC1234", rgcpf: "000.000.000-00" }, ...]
+*/
+
+// --- CRUD básico ---
 function adicionarAutorizado() {
-  const nome = document.getElementById("nomeAutInput").value;
-  const placa = document.getElementById("placaAutInput").value;
-  const rgcpf = document.getElementById("rgcpfAutInput").value;
+  const nome  = document.getElementById("nomeAutInput")?.value?.trim();
+  const placa = document.getElementById("placaAutInput")?.value?.toUpperCase()?.trim();
+  const rgcpf = document.getElementById("rgcpfAutInput")?.value?.trim();
+
   if (!nome || !placa || !rgcpf) { alert("Preencha todos os campos!"); return; }
+
   bancoAutorizados.push({ nome, placa, rgcpf });
-  salvarBanco();
-  // reaplica o filtro atual após adicionar
-  pesquisarAutorizados();
-  document.getElementById("nomeAutInput").value = "";
-  document.getElementById("placaAutInput").value = "";
-  document.getElementById("rgcpfAutInput").value = "";
-  alert("Autorizado cadastrado com sucesso!");
+  // persista no LS se você usa:
+  try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
+
+  limparFormAut();
+  pesquisarAutorizados(); // atualiza com o filtro atual (se houver)
+  alert("Autorizado adicionado!");
 }
 
+function limparFormAut() {
+  const n = document.getElementById("nomeAutInput");
+  const p = document.getElementById("placaAutInput");
+  const r = document.getElementById("rgcpfAutInput");
+  if (n) n.value = "";
+  if (p) p.value = "";
+  if (r) r.value = "";
+}
+
+function selecionarAutorizado(idx) {
+  autorizadoSelecionado = idx;
+}
+
+function iniciarEdicaoAut() {
+  if (autorizadoSelecionado == null) return;
+  const item = bancoAutorizados[autorizadoSelecionado];
+  const novoNome  = prompt("Motorista:", item.nome);
+  if (novoNome == null) return;
+
+  const novaPlaca = prompt("Placa:", item.placa);
+  if (novaPlaca == null) return;
+
+  const novoDoc   = prompt("RG/CPF:", item.rgcpf);
+  if (novoDoc == null) return;
+
+  bancoAutorizados[autorizadoSelecionado] = {
+    nome: novoNome.trim(),
+    placa: (novaPlaca || "").toUpperCase().trim(),
+    rgcpf: novoDoc.trim()
+  };
+
+  try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
+  pesquisarAutorizados();
+  alert("Autorizado atualizado!");
+}
+
+function confirmarEdicaoAut() {
+  // Mantido para compatibilidade com chamadas antigas (se existirem)
+  iniciarEdicaoAut();
+}
+
+function iniciarExclusaoAut() {
+  if (autorizadoSelecionado == null) return;
+  const item = bancoAutorizados[autorizadoSelecionado];
+  if (confirm(`Excluir ${item?.placa || ""} - ${item?.nome || ""}?`)) {
+    bancoAutorizados.splice(autorizadoSelecionado, 1);
+    try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
+    autorizadoSelecionado = null;
+    pesquisarAutorizados();
+    alert("Autorizado excluído com sucesso!");
+  }
+}
+
+// --- Render (cards estilo do print) ---
 function atualizarAutorizados(filtro = "") {
   const listaDiv = document.getElementById("listaAutorizados");
   if (!listaDiv) return;
@@ -31,83 +94,78 @@ function atualizarAutorizados(filtro = "") {
 
   const filtroNorm = normalizarTexto(filtro);
 
-  bancoAutorizados.forEach((item, index) => {
-    const nomeNorm = normalizarTexto(item.nome);
-    const placaNorm = normalizarTexto(item.placa);
-    if (nomeNorm.includes(filtroNorm) || placaNorm.includes(filtroNorm)) {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.dataset.index = index;
-      div.innerHTML = `<b>${item.placa}</b> - ${item.nome} - RG/CPF: ${item.rgcpf}`;
-      div.onclick = () => selecionarAutorizado(index);
-      listaDiv.appendChild(div);
+  (bancoAutorizados || []).forEach((item, index) => {
+    const nomeNorm  = normalizarTexto(item?.nome);
+    const placaNorm = normalizarTexto(item?.placa);
+
+    if (!filtroNorm || nomeNorm.includes(filtroNorm) || placaNorm.includes(filtroNorm)) {
+      // card
+      const card = document.createElement("div");
+      card.className = "aut-card";
+      card.dataset.index = index;
+
+      // topo: badge + ações
+      const top = document.createElement("div");
+      top.className = "aut-topline";
+
+      const badge = document.createElement("span");
+      badge.className = "aut-placa-badge";
+      badge.textContent = (item?.placa || "").toUpperCase();
+
+      const actions = document.createElement("div");
+      actions.className = "aut-actions";
+
+      const btnEdit = document.createElement("button");
+      btnEdit.className = "aut-pill edit";
+      btnEdit.textContent = "Editar";
+      btnEdit.onclick = (e) => {
+        e.stopPropagation();
+        autorizadoSelecionado = index;
+        iniciarEdicaoAut();
+      };
+
+      const btnDel = document.createElement("button");
+      btnDel.className = "aut-pill del";
+      btnDel.textContent = "Excluir";
+      btnDel.onclick = (e) => {
+        e.stopPropagation();
+        autorizadoSelecionado = index;
+        iniciarExclusaoAut();
+      };
+
+      actions.appendChild(btnEdit);
+      actions.appendChild(btnDel);
+      top.appendChild(badge);
+      top.appendChild(actions);
+
+      // grid de campos
+      const grid = document.createElement("div");
+      grid.className = "aut-grid";
+
+      const fMotorista = document.createElement("div");
+      fMotorista.className = "aut-field";
+      fMotorista.innerHTML = `<span class="label">Motorista</span><span class="value">${item?.nome || "-"}</span>`;
+
+      const fDoc = document.createElement("div");
+      fDoc.className = "aut-field";
+      fDoc.innerHTML = `<span class="label">Documento</span><span class="value">${item?.rgcpf || "-"}</span>`;
+
+      grid.appendChild(fMotorista);
+      grid.appendChild(fDoc);
+
+      // seleção por toque (compatível com fluxo existente)
+      card.onclick = () => selecionarAutorizado(index);
+
+      // monta card
+      card.appendChild(top);
+      card.appendChild(grid);
+      listaDiv.appendChild(card);
     }
   });
 }
 
-function selecionarAutorizado(index) {
-  const itens = document.querySelectorAll("#listaAutorizados .item");
-  itens.forEach((el) => {
-    if (parseInt(el.dataset.index, 10) === index) {
-      el.classList.add("selecionado");
-      autorizadoSelecionado = index;
-    } else {
-      el.classList.remove("selecionado");
-    }
-  });
-}
-
-function iniciarEdicaoAut() {
-  if (autorizadoSelecionado === null) {
-    alert("Selecione um autorizado para editar!");
-    return;
-  }
-  const index = autorizadoSelecionado;
-  const item = bancoAutorizados[index];
-
-  mostrarPopup(`
-    <h3>Editar Autorizado</h3>
-    <input type="text" id="editNome" value="${item.nome}" placeholder="Nome">
-    <input type="text" id="editPlaca" value="${item.placa}" placeholder="Placa">
-    <input type="text" id="editRgcpf" value="${item.rgcpf}" placeholder="RG/CPF">
-    <button class="entrada" onclick="confirmarEdicaoAut(${index})">Confirmar</button>
-  `);
-}
-
-function confirmarEdicaoAut(index) {
-  const nome = document.getElementById("editNome").value;
-  const placa = document.getElementById("editPlaca").value;
-  const rgcpf = document.getElementById("editRgcpf").value;
-  if (!nome || !placa || !rgcpf) { alert("Preencha todos os campos!"); return; }
-  bancoAutorizados[index] = { nome, placa, rgcpf };
-  salvarBanco();
-  // mantém resultados filtrados
-  pesquisarAutorizados();
-  fecharPopup();
-  alert("Autorizado editado com sucesso!");
-  const itens = document.querySelectorAll("#listaAutorizados .item");
-  itens.forEach(el => el.classList.remove("selecionado"));
-  autorizadoSelecionado = null;
-}
-
-function iniciarExclusaoAut() {
-  if (autorizadoSelecionado === null) {
-    alert("Selecione um autorizado para excluir!");
-    return;
-  }
-  const index = autorizadoSelecionado;
-  if (confirm(`Deseja realmente excluir ${bancoAutorizados[index].nome}?`)) {
-    bancoAutorizados.splice(index, 1);
-    autorizadoSelecionado = null;
-    salvarBanco();
-    // atualiza lista conforme termo pesquisado
-    pesquisarAutorizados();
-    alert("Autorizado excluído com sucesso!");
-  }
-}
-
+// --- Busca dinâmica ---
 function pesquisarAutorizados() {
-
   const campo = document.getElementById("pesquisaAut");
   const termo = campo ? campo.value : "";
   atualizarAutorizados(termo);
@@ -124,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Expondo globalmente
+// Expondo globalmente (se outras partes chamam)
 window.adicionarAutorizado = adicionarAutorizado;
 window.atualizarAutorizados = atualizarAutorizados;
 window.selecionarAutorizado = selecionarAutorizado;
