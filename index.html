@@ -24,7 +24,7 @@ if ('serviceWorker' in navigator) {
         const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
         if (status.state === 'granted') {
           await registration.periodicSync.register('daily-email', {
-            minInterval: 24 * 60 * 60 * 1000,
+            minInterval:  60 * 1000,
           });
           console.log('Periodic Sync registrado!');
         }
