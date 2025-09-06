@@ -8,6 +8,9 @@ function atualizarTudo(){
 
 mostrarPagina('inicioContainer');
 atualizarTudo();
-window.addEventListener("load", checarExportacaoAutomaticaPDF);
+window.addEventListener("load", () => {
+  checarExportacaoAutomaticaPDF();
+  processarRelatoriosPendentes();
+});
 // garante que bancos estejam persistidos
 salvarBanco();
