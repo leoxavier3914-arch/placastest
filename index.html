@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#2196F3">
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
-  <!-- libs opcionais já usadas no seu app -->
+  <!-- libs opcionais -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -22,7 +22,7 @@
 </head>
 <body>
 
-<!-- botão/menu lateral (mantido) -->
+<!-- botão/menu lateral -->
 <div class="menu-btn" onclick="toggleMenu()">&#9776;</div>
 <div id="menu" class="menu-content">
   <a href="#" onclick="mostrarPagina('inicioContainer'); toggleMenu();">Início</a>
@@ -32,7 +32,7 @@
   <a href="#" onclick="limparTudo(); toggleMenu();">Limpar Dados</a>
 </div>
 
-<!-- overlay/popup genéricos usados pelo Autorizados -->
+<!-- overlay/popup -->
 <div id="overlay" onclick="fecharPopup()"></div>
 <div id="popupCard">
   <button class="fecharBtn" onclick="fecharPopup()">×</button>
@@ -55,13 +55,12 @@
   </table>
 </div>
 
-<!-- CADASTROS (conteúdo original permanece) -->
+<!-- CADASTROS -->
 <div id="cadastroContainer">
   <h2>Cadastros</h2>
-  <!-- ... seu conteúdo de cadastros aqui ... -->
 </div>
 
-<!-- AUTORIZADOS (NOVO LAYOUT) -->
+<!-- AUTORIZADOS -->
 <div id="autorizadosContainer">
   <h2 class="aut-header">Veículos Autorizados</h2>
 
@@ -83,7 +82,7 @@
   </div>
 </div>
 
-<!-- HISTÓRICO (mantido) -->
+<!-- HISTÓRICO -->
 <div id="historicoContainer">
   <h2>Histórico</h2>
   <label for="dataFiltro">Selecionar data:</label>
@@ -97,7 +96,7 @@
   <button onclick="importarLS()">Importar LS</button>
 </div>
 
-<!-- seus scripts existentes -->
+<!-- scripts -->
 <script src="js/db.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/cadastros.js"></script>
