@@ -149,6 +149,29 @@ function enviarEmail() {
   });
 }
 
+// Gerencia fila de envios pendentes
+function obterPendenciasEnvio() {
+  return JSON.parse(localStorage.getItem("pendenciasEnvio") || "[]");
+}
+
+function salvarPendenciasEnvio(fila) {
+  localStorage.setItem("pendenciasEnvio", JSON.stringify(fila));
+}
+
+async function tentarEnviarPendencias() {
+  let fila = obterPendenciasEnvio();
+  while (fila.length > 0) {
+    const { pdfDataUri, dateISO } = fila.shift();
+    salvarPendenciasEnvio(fila);
+    try {
+      await enviarEmailAutomatico(pdfDataUri, dateISO);
+    } catch (err) {
+      break;
+    }
+    fila = obterPendenciasEnvio();
+  }
+}
+
 // Envia e-mail automaticamente utilizando um PDF já gerado
 function enviarEmailAutomatico(pdfDataUri, data) {
   return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
@@ -160,12 +183,17 @@ function enviarEmailAutomatico(pdfDataUri, data) {
     localStorage.setItem("ultimoRelatorioEnviado", data);
   }).catch(err => {
     console.error(`Erro ao enviar relatório automático de ${data}:`, err);
+    const fila = obterPendenciasEnvio();
+    fila.push({ dateISO: data, pdfDataUri });
+    salvarPendenciasEnvio(fila);
     throw err;
   });
 }
 
 // Processa e envia relatórios pendentes desde a última data enviada
 async function processarRelatoriosPendentes() {
+  await tentarEnviarPendencias();
+
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
 
@@ -200,6 +228,7 @@ async function processarRelatoriosPendentes() {
         if (doc) {
           const pdfDataUri = doc.output("datauristring");
           await enviarEmailAutomatico(pdfDataUri, dataISO);
+          await tentarEnviarPendencias();
         }
       } else {
         localStorage.setItem("ultimoRelatorioEnviado", dataISO);
@@ -220,6 +249,7 @@ function agendarEnvioHoje() {
   const ms = fimDia.getTime() - agora.getTime();
   if (ms <= 0) return;
   setTimeout(async () => {
+    await tentarEnviarPendencias();
     const hojeISO = new Date().toISOString().split("T")[0];
     const hojeTexto = formatarData(new Date());
     const registros = bancoHistorico.filter(i => i.data === hojeTexto);
@@ -227,7 +257,10 @@ function agendarEnvioHoje() {
       const doc = gerarRelatorioPDF(registros, hojeTexto);
       if (doc) {
         const pdfDataUri = doc.output("datauristring");
-        try { await enviarEmailAutomatico(pdfDataUri, hojeISO); } catch (err) {}
+        try {
+          await enviarEmailAutomatico(pdfDataUri, hojeISO);
+          await tentarEnviarPendencias();
+        } catch (err) {}
       }
     } else {
       localStorage.setItem("ultimoRelatorioEnviado", hojeISO);
