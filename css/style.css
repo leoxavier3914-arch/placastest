@@ -9,6 +9,7 @@ button { color: white; border: none; cursor: pointer; background: #4CAF50; }
 .card { background: white; padding: 15px; margin-top: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,.2); text-align: left; }
 .lista { margin-top:20px; }
 .item { border-bottom:1px solid #ddd; padding:8px; text-align:left; }
+
 #historicoContainer, #cadastroContainer, #autorizadosContainer, #inicioContainer { display:none; }
 
 .horaEntrada { color: green; font-weight: bold; }
@@ -19,9 +20,28 @@ table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: colla
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #f2f2f2; }
 
-/* botões utilitários (se usados) */
-.botaoExcluir { background-color: #f44336; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-.botaoExcluir:hover { background-color: #d32f2f; }
+/* Menu lateral e popup (mantidos) */
+.menu-btn { position: fixed; top: 10px; left: 10px; font-size: 30px; cursor: pointer; z-index: 1001; }
+.menu-content { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #333; overflow-x: hidden; transition: 0.3s; padding-top: 60px; z-index: 1000; }
+.menu-content a { padding: 10px 20px; text-decoration: none; display: block; color: white; font-weight: bold; }
+.menu-content a:hover { background: #575757; }
+.menu-open { left: 0; }
+
+#overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1001; display: none; }
+#popupCard { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); background: white; padding: 25px 20px 20px 20px; width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 1002; display: none; }
+#popupCard .fecharBtn { position: absolute; top: -10px; right: -10px; background: white; border: 2px solid #f44336; width: 36px; height: 36px; border-radius: 50%; font-size: 26px; font-weight: bold; cursor: pointer; color: #f44336; }
+
+#exportBtn { background-color: #2196F3; }
+
+/* ======== BLOCO LEGADO DA LISTA DE AUTORIZADOS (mantido para compat) ======== */
+#listaAutorizados { margin-top: 20px; }
+#listaAutorizados .item { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; cursor: pointer; position: relative; }
+.item.selecionado { border: 2px solid #4CAF50; border-radius: 5px; background-color: #e0f7e0; }
+.item .menuSerra { display: none; position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; font-weight: bold; font-size: 18px; }
+.item.selecionado .menuSerra { display: block; }
+.item .submenu { display: none; position: absolute; top: 50%; right: 14px; transform: translateY(-50%); background: white; border: 1px solid #ccc; border-radius: 5px; z-index: 1000; min-width: 100px; }
+.item .submenu div { padding: 5px 10px; cursor: pointer; }
+.item .submenu div:hover { background-color: #f2f2f2; }
 
 /* ====== AUTORIZADOS (look parecido com o print) ====== */
 .aut-header {
