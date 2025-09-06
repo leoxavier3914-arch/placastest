@@ -138,13 +138,101 @@ function enviarEmail() {
     to_email: "leomato3914@gmail.com",
     message: "TESTE",
     attachment: pdfDataUri
-   
+
   }).then(() => {
     alert("PDF enviado com sucesso!");
+    const dataISO = dataTexto.split("/").reverse().join("-");
+    localStorage.setItem("ultimoRelatorioEnviado", dataISO);
   }).catch(err => {
     console.error("Erro ao enviar PDF:", err);
     alert("Falha ao enviar o PDF.");
   });
+}
+
+// Envia e-mail automaticamente utilizando um PDF já gerado
+function enviarEmailAutomatico(pdfDataUri, data) {
+  return emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+    to_email: "leomato3914@gmail.com",
+    message: `Envio automático ${data}`,
+    attachment: pdfDataUri
+  }).then(() => {
+    console.log(`Relatório de ${data} enviado automaticamente.`);
+    localStorage.setItem("ultimoRelatorioEnviado", data);
+  }).catch(err => {
+    console.error(`Erro ao enviar relatório automático de ${data}:`, err);
+    throw err;
+  });
+}
+
+// Processa e envia relatórios pendentes desde a última data enviada
+async function processarRelatoriosPendentes() {
+  const ontem = new Date();
+  ontem.setDate(ontem.getDate() - 1);
+
+  const ultimoStr = localStorage.getItem("ultimoRelatorioEnviado");
+  let proxima;
+
+  if (ultimoStr) {
+    const ultimo = new Date(ultimoStr);
+    proxima = new Date(ultimo);
+    proxima.setDate(proxima.getDate() + 1);
+  } else {
+    // Busca a primeira data existente no histórico
+    proxima = bancoHistorico.reduce((min, item) => {
+      const [d, m, a] = item.data.split("/").map(Number);
+      const dt = new Date(a, m - 1, d);
+      return (!min || dt < min) ? dt : min;
+    }, null);
+  }
+
+  if (!proxima) {
+    agendarEnvioHoje();
+    return;
+  }
+
+  while (proxima <= ontem) {
+    const dataISO = proxima.toISOString().split("T")[0];
+    const dataTexto = formatarData(proxima);
+    const registros = bancoHistorico.filter(i => i.data === dataTexto);
+    try {
+      if (registros.length > 0) {
+        const doc = gerarRelatorioPDF(registros, dataTexto);
+        if (doc) {
+          const pdfDataUri = doc.output("datauristring");
+          await enviarEmailAutomatico(pdfDataUri, dataISO);
+        }
+      } else {
+        localStorage.setItem("ultimoRelatorioEnviado", dataISO);
+      }
+    } catch (err) {
+      break;
+    }
+    proxima.setDate(proxima.getDate() + 1);
+  }
+
+  agendarEnvioHoje();
+}
+
+function agendarEnvioHoje() {
+  const agora = new Date();
+  const fimDia = new Date();
+  fimDia.setHours(23, 59, 0, 0);
+  const ms = fimDia.getTime() - agora.getTime();
+  if (ms <= 0) return;
+  setTimeout(async () => {
+    const hojeISO = new Date().toISOString().split("T")[0];
+    const hojeTexto = formatarData(new Date());
+    const registros = bancoHistorico.filter(i => i.data === hojeTexto);
+    if (registros.length > 0) {
+      const doc = gerarRelatorioPDF(registros, hojeTexto);
+      if (doc) {
+        const pdfDataUri = doc.output("datauristring");
+        try { await enviarEmailAutomatico(pdfDataUri, hojeISO); } catch (err) {}
+      }
+    } else {
+      localStorage.setItem("ultimoRelatorioEnviado", hojeISO);
+    }
+  }, ms);
 }
 
 function checarExportacaoAutomaticaPDF() {
@@ -257,6 +345,8 @@ window.exportarPDF = exportarPDF;
 
 
 window.enviarEmail = enviarEmail;
+window.enviarEmailAutomatico = enviarEmailAutomatico;
+window.processarRelatoriosPendentes = processarRelatoriosPendentes;
 
 window.checarExportacaoAutomaticaPDF = checarExportacaoAutomaticaPDF;
 
