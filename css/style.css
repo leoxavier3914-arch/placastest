@@ -1,4 +1,4 @@
-/* ===== BASE APP ===== */
+/* ===== BASE APP (do seu projeto) ===== */
 body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; padding: 20px; margin:0; }
 h1 { color: #333; margin-top: 50px; }
 input, select, button { padding: 10px; margin: 8px; width: 90%; max-width: 300px; border: 1px solid #ccc; border-radius: 5px; }
@@ -20,20 +20,19 @@ table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: colla
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #f2f2f2; }
 
-/* MENU LATERAL E POPUP */
+/* MENU LATERAL (do seu app) */
 .menu-btn { position: fixed; top: 10px; left: 10px; font-size: 30px; cursor: pointer; z-index: 1001; }
 .menu-content { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #333; overflow-x: hidden; transition: 0.3s; padding-top: 60px; z-index: 1000; }
 .menu-content a { padding: 10px 20px; text-decoration: none; display: block; color: white; font-weight: bold; }
 .menu-content a:hover { background: #575757; }
 .menu-open { left: 0; }
 
+/* Popup GLOBAL do seu app (mantido, sem estilos invasivos aqui) */
 #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1001; display: none; }
-#popupCard { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); background: white; padding: 25px 20px 20px 20px; width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 1002; display: none; }
-#popupCard .fecharBtn { position: absolute; top: -10px; right: -10px; background: white; border: 2px solid #f44336; width: 36px; height: 36px; border-radius: 50%; font-size: 26px; font-weight: bold; cursor: pointer; color: #f44336; }
+#popupCard { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); background: white; padding: 20px; width: 90%; max-width: 500px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); z-index: 1002; display: none; }
+/* Removido o seletor #popupCard .fecharBtn para NÃO alterar o seu X global */
 
-#exportBtn { background-color: #2196F3; }
-
-/* ====== AUTORIZADOS (paleta azul) ====== */
+/* ====== AUTORIZADOS (paleta azul, isolado) ====== */
 .aut-header { margin-top: 12px; margin-bottom: 8px; font-size: 18px; font-weight: 700; color: #1e3a5f; }
 
 .aut-toolbar {
@@ -85,13 +84,10 @@ th { background-color: #f2f2f2; }
 .aut-field .label { display: block; font-size: 11px; font-weight: 700; color: #476282; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
 .aut-field .value { font-size: 14px; color: #1e293b; }
 
-/* Veja mais */
-.aut-more {
-  display: none;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed #c9def3;
-}
+/* Veja mais (Documento, Modelo, Cor) */
+.aut-more { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #c9def3; }
+
+/* Botão veja mais (harmonizado) */
 .aut-more-btn {
   background: #2563eb;
   border: none;
@@ -115,7 +111,26 @@ th { background-color: #f2f2f2; }
 }
 .aut-form h3 { margin: 0 0 6px 0; font-size: 15px; color: #1e3a5f; }
 
-/* Popup de edição */
+/* ===== Popup EXCLUSIVO da página Autorizados ===== */
+#aut-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1101; display: none;
+}
+#aut-popupCard {
+  position: fixed; top: 15%; left: 50%; transform: translateX(-50%);
+  background: #fff; padding: 20px; width: 90%; max-width: 500px;
+  border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  z-index: 1102; display: none;
+}
+#aut-popupCard .aut-fecharBtn {
+  position: absolute; top: 10px; right: 10px;
+  background: #fff; border: 2px solid #2563eb; color: #2563eb;
+  width: 32px; height: 32px; border-radius: 50%;
+  font-size: 22px; line-height: 26px; font-weight: 700; cursor: pointer;
+}
+
+/* Popup (inputs com borda azul) */
 .aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#1e3a5f; }
 .aut-modal-grid{ display:grid; gap:10px; }
 .aut-input{ width:100%; padding:10px 12px; border:1px solid #c9def3; border-radius:8px; background:#fff; }
