@@ -1,7 +1,7 @@
 // ===== Autorizados =====
 let autorizadoSelecionado = null;
 
-// Normaliza texto removendo acentos e ignorando maiúsculas/minúsculas
+// Normaliza texto (remove acentos e case-insensitive)
 function normalizarTexto(texto) {
   return (texto || "")
     .normalize("NFD")
@@ -11,7 +11,7 @@ function normalizarTexto(texto) {
 }
 
 /*
-  Estrutura esperada de cada item no bancoAutorizados:
+  Estrutura de cada item em bancoAutorizados:
   {
     nome: "Fulano",
     placa: "ABC1234",
@@ -51,14 +51,17 @@ function adicionarAutorizado() {
   const modelo = document.getElementById("modeloAutInput")?.value?.trim();
   const cor = document.getElementById("corAutInput")?.value?.trim();
 
-  if (!nome || !placa || !autoridade || !documento) {
-    alert("Preencha nome, placa, autoridade e documento.");
+  if (!nome || !autoridade) {
+    alert("Preencha pelo menos Nome e Autoridade.");
     return;
   }
 
   bancoAutorizados.push({ nome, placa, autoridade, documento, modelo, cor });
+
+  // persiste (se estiver usando LS)
   try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
 
+  // limpa form
   ["nomeAutInput","placaAutInput","autoridadeAutInput","rgcpfAutInput","modeloAutInput","corAutInput"].forEach(id=>{
     const el = document.getElementById(id); if (el) el.value = "";
   });
@@ -85,13 +88,13 @@ function iniciarEdicaoAut() {
         </div>
 
         <div class="aut-field">
-          <label class="label" for="editPlaca">Placa</label>
-          <input id="editPlaca" class="aut-input" type="text" maxlength="7" value="${(item.placa||"").toUpperCase()}" placeholder="ABC1234" oninput="this.value=this.value.toUpperCase()">
+          <label class="label" for="editAutoridade">Autoridade</label>
+          <input id="editAutoridade" class="aut-input" type="text" value="${item.autoridade || ""}" placeholder="Ex.: Segurança, Fiscal...">
         </div>
 
         <div class="aut-field">
-          <label class="label" for="editAutoridade">Autoridade</label>
-          <input id="editAutoridade" class="aut-input" type="text" value="${item.autoridade || ""}" placeholder="Ex.: Segurança, Fiscal...">
+          <label class="label" for="editPlaca">Placa</label>
+          <input id="editPlaca" class="aut-input" type="text" maxlength="7" value="${(item.placa||"").toUpperCase()}" placeholder="ABC1234" oninput="this.value=this.value.toUpperCase()">
         </div>
 
         <div class="aut-field">
@@ -123,18 +126,19 @@ function iniciarEdicaoAut() {
   if (btnSalvar) {
     btnSalvar.onclick = () => {
       const nome  = document.getElementById("editNome")?.value?.trim();
-      const placa = document.getElementById("editPlaca")?.value?.toUpperCase()?.trim();
       const autoridade = document.getElementById("editAutoridade")?.value?.trim();
+      const placa = document.getElementById("editPlaca")?.value?.toUpperCase()?.trim();
       const documento  = document.getElementById("editDocumento")?.value?.trim();
       const modelo = document.getElementById("editModelo")?.value?.trim();
       const cor = document.getElementById("editCor")?.value?.trim();
 
-      if (!nome || !placa || !autoridade || !documento) {
-        alert("Preencha nome, placa, autoridade e documento.");
+      if (!nome || !autoridade) {
+        alert("Preencha pelo menos Nome e Autoridade.");
         return;
       }
 
       bancoAutorizados[autorizadoSelecionado] = { nome, placa, autoridade, documento, modelo, cor };
+
       try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
 
       fecharPopup();
@@ -150,7 +154,7 @@ function confirmarEdicaoAut(){ iniciarEdicaoAut(); }
 function iniciarExclusaoAut() {
   if (autorizadoSelecionado == null) return;
   const item = bancoAutorizados[autorizadoSelecionado];
-  if (confirm(`Excluir ${item?.placa || ""} - ${item?.nome || ""}?`)) {
+  if (confirm(`Excluir ${item?.nome || ""}${item?.placa ? " - " + item.placa : ""}?`)) {
     bancoAutorizados.splice(autorizadoSelecionado, 1);
     try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
     autorizadoSelecionado = null;
@@ -159,7 +163,7 @@ function iniciarExclusaoAut() {
   }
 }
 
-// ---------- Render (cards + veja mais) ----------
+// ---------- Render (Placa no badge; grid: Nome + Autoridade; veja mais: Documento, Modelo, Cor) ----------
 function atualizarAutorizados(filtro = "") {
   const listaDiv = document.getElementById("listaAutorizados");
   if (!listaDiv) return;
@@ -180,6 +184,7 @@ function atualizarAutorizados(filtro = "") {
       const top = document.createElement("div");
       top.className = "aut-topline";
 
+      // badge da placa (visível novamente)
       const badge = document.createElement("span");
       badge.className = "aut-placa-badge";
       badge.textContent = (item?.placa || "").toUpperCase();
@@ -210,6 +215,7 @@ function atualizarAutorizados(filtro = "") {
       top.appendChild(badge);
       top.appendChild(actions);
 
+      // grid: Nome + Autoridade
       const grid = document.createElement("div");
       grid.className = "aut-grid";
 
@@ -221,18 +227,14 @@ function atualizarAutorizados(filtro = "") {
       fAutoridade.className = "aut-field";
       fAutoridade.innerHTML = `<span class="label">Autoridade</span><span class="value">${item?.autoridade || "-"}</span>`;
 
-      const fDoc = document.createElement("div");
-      fDoc.className = "aut-field";
-      fDoc.innerHTML = `<span class="label">Documento</span><span class="value">${item?.documento || "-"}</span>`;
-
       grid.appendChild(fNome);
       grid.appendChild(fAutoridade);
-      grid.appendChild(fDoc);
 
-      // Veja mais (modelo/cor)
+      // veja mais: Documento, Modelo, Cor (placa já está no badge)
       const more = document.createElement("div");
       more.className = "aut-more";
       more.innerHTML = `
+        <div class="aut-field"><span class="label">Documento</span><span class="value">${item?.documento || "-"}</span></div>
         <div class="aut-field"><span class="label">Modelo</span><span class="value">${item?.modelo || "-"}</span></div>
         <div class="aut-field"><span class="label">Cor</span><span class="value">${item?.cor || "-"}</span></div>
       `;
@@ -279,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Expor globais
+// Expor globais (se outras partes chamam)
 window.adicionarAutorizado = adicionarAutorizado;
 window.atualizarAutorizados = atualizarAutorizados;
 window.selecionarAutorizado = selecionarAutorizado;
