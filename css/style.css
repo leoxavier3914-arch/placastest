@@ -35,13 +35,8 @@ th { background-color: #f2f2f2; }
 #exportBtn { background-color: #2196F3; }
 
 /* ====== AUTORIZADOS (look do print) ====== */
-.aut-header {
-  margin-top: 12px;
-  margin-bottom: 8px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #2e4a39;
-}
+.aut-header { margin-top: 12px; margin-bottom: 8px; font-size: 18px; font-weight: 700; color: #2e4a39; }
+
 .aut-toolbar {
   position: static;              /* não gruda ao rolar */
   padding: 8px 10px;
@@ -57,62 +52,39 @@ th { background-color: #f2f2f2; }
   background: #fff;
 }
 
-.aut-lista {
-  margin-top: 12px;
-  display: grid;
-  gap: 10px;
-}
+.aut-lista { margin-top: 12px; display: grid; gap: 10px; }
 
 /* Card */
 .aut-card {
-  background: #effaf3;             /* verde bem claro */
+  background: #effaf3;               /* verde bem claro */
   border: 1px solid #d2eddc;
-  border-left: 6px solid #3cb371;   /* destaque lateral */
+  border-left: 6px solid #3cb371;     /* destaque lateral */
   border-radius: 12px;
   padding: 12px;
   text-align: left;
   box-shadow: 0 2px 6px rgba(0,0,0,.06);
 }
-.aut-topline {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-}
-.aut-placa-badge { display: none; } /* placa vai para o "veja mais" */
-.aut-actions { display: flex; gap: 6px; }
-.aut-pill {
-  border: none;
-  border-radius: 999px;
+.aut-topline { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.aut-placa-badge {
+  display: inline-block;               /* VOLTOU a aparecer */
   padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 999px;
+  background: #3cb371;
   color: #fff;
+  font-weight: 700;
+  letter-spacing: .5px;
+  font-size: 13px;
 }
+.aut-actions { display: flex; gap: 6px; }
+.aut-pill { border: none; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #fff; }
 .aut-pill.edit { background: #2196F3; }
 .aut-pill.del  { background: #f44336; }
 
-.aut-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
-  margin-top: 10px;
-}
-.aut-field .label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  color: #557a66;
-  text-transform: uppercase;
-  letter-spacing: .4px;
-  margin-bottom: 2px;
-}
-.aut-field .value {
-  font-size: 14px;
-  color: #1f2d26;
-}
+.aut-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
+.aut-field .label { display: block; font-size: 11px; font-weight: 700; color: #557a66; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+.aut-field .value { font-size: 14px; color: #1f2d26; }
 
-/* Veja mais (Placa, Documento, Modelo, Cor) */
+/* Veja mais (Documento, Modelo, Cor) */
 .aut-more {
   display: none;
   margin-top: 8px;
@@ -140,11 +112,7 @@ th { background-color: #f2f2f2; }
   text-align: left;
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
-.aut-form h3 {
-  margin: 0 0 6px 0;
-  font-size: 15px;
-  color: #2e4a39;
-}
+.aut-form h3 { margin: 0 0 6px 0; font-size: 15px; color: #2e4a39; }
 
 /* Popup de edição */
 .aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#2e4a39; }
