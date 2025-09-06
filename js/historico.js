@@ -71,9 +71,12 @@ function salvarUltimoRelatorioEnviado(data) {
   localStorage.setItem("ultimoRelatorioEnviado", data);
 }
 
+// Mapeia quais datas já tiveram relatório enviado
+let relatoriosEnviados = JSON.parse(localStorage.getItem("relatoriosEnviados") || "{}");
 
+function salvarRelatoriosEnviados() {
+  localStorage.setItem("relatoriosEnviados", JSON.stringify(relatoriosEnviados));
 }
-
 function gerarRelatorioPDF(registros, dataRelatorio) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
@@ -220,8 +223,6 @@ function horarioEntradaValido(horario) {
 
 // Processa e envia relatórios pendentes desde a última data enviada
 async function processarRelatoriosPendentes() {
-
-
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
   let proxima = bancoHistorico.reduce((min, item) => {
@@ -237,7 +238,6 @@ async function processarRelatoriosPendentes() {
 
   while (proxima <= ontem && relatoriosEnviados[proxima.toISOString().split("T")[0]]) {
     proxima.setDate(proxima.getDate() + 1);
-
   }
 
   if (proxima > ontem) {
@@ -247,7 +247,13 @@ async function processarRelatoriosPendentes() {
 
   while (proxima <= ontem) {
     const dataISO = proxima.toISOString().split("T")[0];
-
+    const registros = bancoHistoricoMap[dataISO] || [];
+    if (registros.length > 0) {
+      try {
+        const doc = gerarRelatorioPDF(registros, converterDataInput(dataISO));
+        if (doc) {
+          const pdfDataUri = doc.output("datauristring");
+          await enviarEmailAutomatico(pdfDataUri, dataISO);
         }
       } catch (err) {
         break;
@@ -268,10 +274,22 @@ function agendarEnvioHoje() {
   setTimeout(async () => {
     await tentarEnviarPendencias();
     const hojeISO = new Date().toISOString().split("T")[0];
-
+    const registros = bancoHistoricoMap[hojeISO] || [];
+    if (registros.length > 0) {
+      const doc = gerarRelatorioPDF(registros, converterDataInput(hojeISO));
+      if (doc) {
+        const pdfDataUri = doc.output("datauristring");
+        try {
+          await enviarEmailAutomatico(pdfDataUri, hojeISO);
+        } catch (err) {
+          const fila = obterPendenciasEnvio();
+          fila.push({ dateISO: hojeISO, pdfDataUri });
+          salvarPendenciasEnvio(fila);
+        }
       }
-    }, ms);
-  }
+    }
+  }, ms);
+}
 
 function checarExportacaoAutomaticaPDF() {
   const agora = new Date();
