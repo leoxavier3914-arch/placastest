@@ -65,7 +65,7 @@ function marcarEntradaComTipo(placa) {
   const cadastro = bancoCadastros.find(i => i.placa === placa) || bancoAutorizados.find(i => i.placa === placa);
   if (!cadastro) return;
   const hoje = formatarData(new Date());
-  bancoHistorico.push({
+  adicionarHistorico({
     nome: cadastro.nome,
     placa: cadastro.placa,
     rgcpf: cadastro.rgcpf,
@@ -75,7 +75,6 @@ function marcarEntradaComTipo(placa) {
     horarioEntrada: new Date().toLocaleTimeString(),
     horarioSaida: ""
   });
-  salvarBanco();
   atualizarTabelaAndamento();
   filtrarHistorico();
   fecharPopup();
@@ -89,8 +88,7 @@ function entradaNovaPlaca(placa) {
   if (!nome || !rgcpf || !tipo || !placa) { alert("Preencha todos os campos!"); return; }
   const hoje = formatarData(new Date());
   bancoCadastros.push({ nome, placa, rgcpf, tipo });
-  bancoHistorico.push({ nome, placa, rgcpf, tipo, status: "Em andamento", data: hoje, horarioEntrada: new Date().toLocaleTimeString(), horarioSaida: "" });
-  salvarBanco();
+  adicionarHistorico({ nome, placa, rgcpf, tipo, status: "Em andamento", data: hoje, horarioEntrada: new Date().toLocaleTimeString(), horarioSaida: "" });
   atualizarCadastros();
   atualizarTabelaAndamento();
   filtrarHistorico();
@@ -104,8 +102,7 @@ function marcarEntrada(placa) {
   const cadastro = bancoCadastros.find(i => i.placa === placa) || bancoAutorizados.find(i => i.placa === placa);
   if (!cadastro) return;
   const hoje = formatarData(new Date());
-  bancoHistorico.push({ nome: cadastro.nome, placa: cadastro.placa, rgcpf: cadastro.rgcpf, tipo: cadastro.tipo || "Autorizado", status: "Em andamento", data: hoje, horarioEntrada: new Date().toLocaleTimeString(), horarioSaida: "" });
-  salvarBanco();
+  adicionarHistorico({ nome: cadastro.nome, placa: cadastro.placa, rgcpf: cadastro.rgcpf, tipo: cadastro.tipo || "Autorizado", status: "Em andamento", data: hoje, horarioEntrada: new Date().toLocaleTimeString(), horarioSaida: "" });
   atualizarTabelaAndamento();
   filtrarHistorico();
   fecharPopup();

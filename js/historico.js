@@ -21,10 +21,12 @@ function converterDataInput(input) {
 
 function filtrarHistorico() {
   const input = document.getElementById("dataFiltro").value;
-  const dataFiltro = input ? converterDataInput(input) : formatarData(new Date());
+  const dataISO = input || new Date().toISOString().split("T")[0];
+  const dataFiltro = converterDataInput(dataISO);
   const listaDiv = document.getElementById("listaHistorico");
   listaDiv.innerHTML = "";
-  bancoHistorico.filter(i => i.data === dataFiltro).forEach(item => {
+  const registros = bancoHistoricoMap[dataISO] || [];
+  registros.forEach(item => {
     let cor = item.status === "Em andamento" ? "red" : item.status === "Finalizado" ? "green" : "black";
     listaDiv.innerHTML += `<div class="item"><b>${item.placa}</b> - ${item.nome} [${item.tipo}] - RG/CPF: ${item.rgcpf}<br>Data:${item.data}<br>Status:<span style="color:${cor}">${item.status}</span><br>Entrada:<span class="horaEntrada">${item.horarioEntrada || "-"}</span>|Saída:<span class="horaSaida">${item.horarioSaida || "-"}</span></div>`;
   });
@@ -32,11 +34,12 @@ function filtrarHistorico() {
 
 function exportarCSV() {
   const dataFiltro = document.getElementById("dataFiltro").value;
-  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
-  const filtered = bancoHistorico.filter(item => item.data === dataTexto);
-  if (filtered.length === 0) { alert("Nenhum dado para exportar."); return; }
+  const dataISO = dataFiltro || new Date().toISOString().split("T")[0];
+  const dataTexto = converterDataInput(dataISO);
+  const registros = bancoHistoricoMap[dataISO] || [];
+  if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
   let csv = "Placa,Nome,Tipo,RG/CPF,Data,Status,Entrada,Saída\n";
-  filtered.forEach(item => {
+  registros.forEach(item => {
     csv += `${item.placa},${item.nome},${item.tipo},${item.rgcpf},${item.data},${item.status},${item.horarioEntrada || '-'},${item.horarioSaida || '-'}\n`;
   });
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -113,8 +116,9 @@ function gerarRelatorioPDF(registros, dataRelatorio) {
 
 function exportarPDF() {
   const dataFiltro = document.getElementById("dataFiltro").value;
-  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
-  const registros = bancoHistorico.filter(item => item.data === dataTexto);
+  const dataISO = dataFiltro || new Date().toISOString().split("T")[0];
+  const dataTexto = converterDataInput(dataISO);
+  const registros = bancoHistoricoMap[dataISO] || [];
   if (registros.length === 0) { alert("Nenhum dado para exportar."); return; }
 
   const nomeArquivo = `historico-${dataTexto.replace(/\//g, '-')}.pdf`;
@@ -128,8 +132,9 @@ function exportarPDF() {
 
 function enviarEmail() {
   const dataFiltro = document.getElementById("dataFiltro").value;
-  const dataTexto = dataFiltro ? converterDataInput(dataFiltro) : formatarData(new Date());
-  const registros = bancoHistorico.filter(item => item.data === dataTexto);
+  const dataISO = dataFiltro || new Date().toISOString().split("T")[0];
+  const dataTexto = converterDataInput(dataISO);
+  const registros = bancoHistoricoMap[dataISO] || [];
   if (registros.length === 0) { alert("Nenhum dado para enviar."); return; }
 
 
@@ -144,7 +149,6 @@ function enviarEmail() {
 
   }).then(() => {
     alert("PDF enviado com sucesso!");
-    const dataISO = dataTexto.split("/").reverse().join("-");
 
   }).catch(err => {
     console.error("Erro ao enviar PDF:", err);
@@ -223,6 +227,7 @@ async function processarRelatoriosPendentes() {
 
   while (proxima <= ontem && relatoriosEnviados[proxima.toISOString().split("T")[0]]) {
     proxima.setDate(proxima.getDate() + 1);
+
   }
 
   if (proxima > ontem) {
@@ -253,10 +258,6 @@ function agendarEnvioHoje() {
   setTimeout(async () => {
     await tentarEnviarPendencias();
     const hojeISO = new Date().toISOString().split("T")[0];
-    if (relatoriosEnviados.includes(hojeISO)) {
-      return;
-    }
-    const hojeTexto = formatarData(new Date());
 
       }
     }, ms);
@@ -272,10 +273,12 @@ function checarExportacaoAutomaticaPDF() {
     const horas24 = 24 * 60 * 60 * 1000;
     if (diff >= horas24) { dataInicio = ultima; } else { return; }
   } else { dataInicio = new Date(agora.getTime() - 24 * 60 * 60 * 1000); }
-  const historicoFiltrado = bancoHistorico.filter(item => {
-    const [dia, mes, ano] = item.data.split("/").map(Number);
-    const dataItem = new Date(ano, mes - 1, dia);
-    return dataItem > dataInicio;
+  const historicoFiltrado = [];
+  Object.keys(bancoHistoricoMap).forEach(iso => {
+    const dataItem = new Date(iso);
+    if (dataItem > dataInicio) {
+      historicoFiltrado.push(...bancoHistoricoMap[iso]);
+    }
   });
   if (historicoFiltrado.length === 0) return;
   const dataHoje = new Date().toISOString().split("T")[0];
@@ -348,6 +351,10 @@ importInput.addEventListener("change", (event) => {
       bancoCadastros = dados.bancoCadastros;
       bancoHistorico = dados.bancoHistorico;
       bancoAutorizados = dados.bancoAutorizados;
+      window.bancoCadastros = bancoCadastros;
+      window.bancoHistorico = bancoHistorico;
+      window.bancoAutorizados = bancoAutorizados;
+      rebuildHistoricoMap();
       salvarBanco();
       atualizarCadastros();
       atualizarTabelaAndamento();
