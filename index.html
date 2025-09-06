@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Controle de Placas</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#2196F3">
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#2196F3"/>
   <!-- CSS -->
-  <link rel="stylesheet" href="css/style.css">
-  <!-- libs opcionais -->
+  <link rel="stylesheet" href="css/style.css"/>
+
+  <!-- libs opcionais já usadas no app -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
   <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then(() => {
@@ -22,7 +24,7 @@
 </head>
 <body>
 
-<!-- botão/menu lateral -->
+<!-- botão/menu lateral (mantido) -->
 <div class="menu-btn" onclick="toggleMenu()">&#9776;</div>
 <div id="menu" class="menu-content">
   <a href="#" onclick="mostrarPagina('inicioContainer'); toggleMenu();">Início</a>
@@ -32,19 +34,19 @@
   <a href="#" onclick="limparTudo(); toggleMenu();">Limpar Dados</a>
 </div>
 
-<!-- overlay/popup -->
+<!-- overlay/popup genéricos (usados pelo Autorizados) -->
 <div id="overlay" onclick="fecharPopup()"></div>
 <div id="popupCard">
   <button class="fecharBtn" onclick="fecharPopup()">×</button>
   <div id="popupConteudo"></div>
 </div>
 
-<!-- INÍCIO -->
+<!-- INÍCIO (mantido) -->
 <div id="inicioContainer">
   <h1>Controle de Placas</h1>
   <p>Digite a placa para verificar:</p>
   <input type="text" id="placaInput" placeholder="Ex: ABC1234" maxlength="7"
-         oninput="this.value = this.value.toUpperCase()">
+         oninput="this.value = this.value.toUpperCase()"/>
   <button onclick="verificarPlaca()">Verificar</button>
   <div id="mensagem"></div>
 
@@ -55,9 +57,10 @@
   </table>
 </div>
 
-<!-- CADASTROS -->
+<!-- CADASTROS (mantido) -->
 <div id="cadastroContainer">
   <h2>Cadastros</h2>
+  <!-- ... seu conteúdo de cadastros ... -->
 </div>
 
 <!-- AUTORIZADOS -->
@@ -65,28 +68,28 @@
   <h2 class="aut-header">Veículos Autorizados</h2>
 
   <div class="aut-toolbar">
-    <input type="text" id="pesquisaAut" placeholder="Pesquisar por nome, placa ou autoridade...">
+    <input type="text" id="pesquisaAut" placeholder="Pesquisar por nome, placa ou autoridade..."/>
   </div>
 
   <div id="listaAutorizados" class="aut-lista"></div>
 
   <div class="aut-form">
     <h3>Novo autorizado</h3>
-    <input type="text" id="nomeAutInput" placeholder="Nome">
-    <input type="text" id="placaAutInput" placeholder="Placa" maxlength="7" oninput="this.value=this.value.toUpperCase()">
-    <input type="text" id="autoridadeAutInput" placeholder="Autoridade (Ex.: Segurança, Fiscal...)">
-    <input type="text" id="rgcpfAutInput" placeholder="Documento (RG/CPF)">
-    <input type="text" id="modeloAutInput" placeholder="Modelo do carro (opcional)">
-    <input type="text" id="corAutInput" placeholder="Cor (opcional)">
+    <input type="text" id="nomeAutInput" placeholder="Nome"/>
+    <input type="text" id="placaAutInput" placeholder="Placa" maxlength="7" oninput="this.value=this.value.toUpperCase()"/>
+    <input type="text" id="autoridadeAutInput" placeholder="Autoridade (Ex.: Segurança, Fiscal...)"/>
+    <input type="text" id="rgcpfAutInput" placeholder="Documento (RG/CPF)"/>
+    <input type="text" id="modeloAutInput" placeholder="Modelo do carro (opcional)"/>
+    <input type="text" id="corAutInput" placeholder="Cor (opcional)"/>
     <button class="entrada" onclick="adicionarAutorizado()">Adicionar</button>
   </div>
 </div>
 
-<!-- HISTÓRICO -->
+<!-- HISTÓRICO (mantido) -->
 <div id="historicoContainer">
   <h2>Histórico</h2>
   <label for="dataFiltro">Selecionar data:</label>
-  <input type="date" id="dataFiltro">
+  <input type="date" id="dataFiltro"/>
   <button onclick="filtrarHistorico()">Buscar</button>
   <div id="listaHistorico" class="lista"></div>
   <button id="exportBtn" onclick="exportarCSV()">Exportar CSV</button>
@@ -96,7 +99,7 @@
   <button onclick="importarLS()">Importar LS</button>
 </div>
 
-<!-- scripts -->
+<!-- seus scripts existentes -->
 <script src="js/db.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/cadastros.js"></script>
