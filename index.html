@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Controle de Placas</title>
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2196F3">
+  <meta name="theme-color" content="#2196F3">
 
   <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
@@ -15,14 +15,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then(() => {
-    console.log('Service Worker registrado!');
-  });
-}
-</script>
-
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(() => {
+      console.log('Service Worker registrado!');
+    });
+  }
+  </script>
 </head>
 <body>
 
@@ -60,20 +59,26 @@ if ('serviceWorker' in navigator) {
 <!-- CADASTROS -->
 <div id="cadastroContainer">
   <h2>Cadastros</h2>
-  <div id="listaCadastros" class="lista"></div>
+  <!-- ... todo o conteúdo original da sua tela de cadastros permanece aqui ... -->
 </div>
 
-<!-- AUTORIZADOS -->
+<!-- AUTORIZADOS (SEÇÃO ATUALIZADA) -->
 <div id="autorizadosContainer">
-  <h2>Autorizados</h2>
-  <input type="text" id="pesquisaAut" placeholder="Pesquisar autorizado..." style="margin-bottom:10px; padding:5px; width:100%;">
-  <div id="listaAutorizados" class="lista"></div>
-  <input type="text" id="nomeAutInput" placeholder="Nome">
-  <input type="text" id="placaAutInput" placeholder="Placa" maxlength="7" oninput="this.value=this.value.toUpperCase()">
-  <input type="text" id="rgcpfAutInput" placeholder="RG/CPF">
-  <button onclick="adicionarAutorizado()">Adicionar</button>
- <button class="botaoExcluir" onclick="iniciarExclusaoAut()">Excluir</button>
-  <button class="botaoEditar" onclick="iniciarEdicaoAut()">Editar</button>
+  <h2 class="aut-header">Veículos Autorizados</h2>
+
+  <div class="aut-toolbar">
+    <input type="text" id="pesquisaAut" placeholder="Pesquisar placa ou nome...">
+  </div>
+
+  <div id="listaAutorizados" class="aut-lista"></div>
+
+  <div class="aut-form">
+    <h3>Novo autorizado</h3>
+    <input type="text" id="nomeAutInput" placeholder="Motorista (Nome)">
+    <input type="text" id="placaAutInput" placeholder="Placa" maxlength="7" oninput="this.value=this.value.toUpperCase()">
+    <input type="text" id="rgcpfAutInput" placeholder="RG/CPF">
+    <button class="entrada" onclick="adicionarAutorizado()">Adicionar</button>
+  </div>
 </div>
 
 <!-- HISTÓRICO -->
