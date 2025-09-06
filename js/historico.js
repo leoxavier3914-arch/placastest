@@ -59,6 +59,17 @@ if (window.emailjs) {
   emailjs.init(EMAILJS_PUBLIC_KEY);
 }
 
+let relatoriosEnviados = {};
+try {
+  relatoriosEnviados = JSON.parse(localStorage.getItem("relatoriosEnviados")) || {};
+} catch (e) {
+  relatoriosEnviados = {};
+}
+
+function salvarRelatoriosEnviados() {
+  localStorage.setItem("relatoriosEnviados", JSON.stringify(relatoriosEnviados));
+}
+
 function gerarRelatorioPDF(registros, dataRelatorio) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
@@ -142,7 +153,8 @@ function enviarEmail() {
   }).then(() => {
     alert("PDF enviado com sucesso!");
     const dataISO = dataTexto.split("/").reverse().join("-");
-    localStorage.setItem("ultimoRelatorioEnviado", dataISO);
+    relatoriosEnviados[dataISO] = true;
+    salvarRelatoriosEnviados();
   }).catch(err => {
     console.error("Erro ao enviar PDF:", err);
     alert("Falha ao enviar o PDF.");
@@ -157,7 +169,8 @@ function enviarEmailAutomatico(pdfDataUri, data) {
     attachment: pdfDataUri
   }).then(() => {
     console.log(`Relatório de ${data} enviado automaticamente.`);
-    localStorage.setItem("ultimoRelatorioEnviado", data);
+    relatoriosEnviados[data] = true;
+    salvarRelatoriosEnviados();
   }).catch(err => {
     console.error(`Erro ao enviar relatório automático de ${data}:`, err);
     throw err;
@@ -168,44 +181,45 @@ function enviarEmailAutomatico(pdfDataUri, data) {
 async function processarRelatoriosPendentes() {
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
+  let proxima = bancoHistorico.reduce((min, item) => {
+    const [d, m, a] = item.data.split("/").map(Number);
+    const dt = new Date(a, m - 1, d);
+    return (!min || dt < min) ? dt : min;
+  }, null);
 
-  const ultimoStr = localStorage.getItem("ultimoRelatorioEnviado");
-  let proxima;
-
-  if (ultimoStr) {
-    const ultimo = new Date(ultimoStr);
-    proxima = new Date(ultimo);
-    proxima.setDate(proxima.getDate() + 1);
-  } else {
-    // Busca a primeira data existente no histórico
-    proxima = bancoHistorico.reduce((min, item) => {
-      const [d, m, a] = item.data.split("/").map(Number);
-      const dt = new Date(a, m - 1, d);
-      return (!min || dt < min) ? dt : min;
-    }, null);
+  if (!proxima || proxima > ontem) {
+    agendarEnvioHoje();
+    return;
   }
 
-  if (!proxima) {
+  while (proxima <= ontem && relatoriosEnviados[proxima.toISOString().split("T")[0]]) {
+    proxima.setDate(proxima.getDate() + 1);
+  }
+
+  if (proxima > ontem) {
     agendarEnvioHoje();
     return;
   }
 
   while (proxima <= ontem) {
     const dataISO = proxima.toISOString().split("T")[0];
-    const dataTexto = formatarData(proxima);
-    const registros = bancoHistorico.filter(i => i.data === dataTexto);
-    try {
-      if (registros.length > 0) {
-        const doc = gerarRelatorioPDF(registros, dataTexto);
-        if (doc) {
-          const pdfDataUri = doc.output("datauristring");
-          await enviarEmailAutomatico(pdfDataUri, dataISO);
+    if (!relatoriosEnviados[dataISO]) {
+      const dataTexto = formatarData(proxima);
+      const registros = bancoHistorico.filter(i => i.data === dataTexto);
+      try {
+        if (registros.length > 0) {
+          const doc = gerarRelatorioPDF(registros, dataTexto);
+          if (doc) {
+            const pdfDataUri = doc.output("datauristring");
+            await enviarEmailAutomatico(pdfDataUri, dataISO);
+          }
+        } else {
+          relatoriosEnviados[dataISO] = true;
+          salvarRelatoriosEnviados();
         }
-      } else {
-        localStorage.setItem("ultimoRelatorioEnviado", dataISO);
+      } catch (err) {
+        break;
       }
-    } catch (err) {
-      break;
     }
     proxima.setDate(proxima.getDate() + 1);
   }
@@ -223,17 +237,18 @@ function agendarEnvioHoje() {
     const hojeISO = new Date().toISOString().split("T")[0];
     const hojeTexto = formatarData(new Date());
     const registros = bancoHistorico.filter(i => i.data === hojeTexto);
-    if (registros.length > 0) {
-      const doc = gerarRelatorioPDF(registros, hojeTexto);
-      if (doc) {
-        const pdfDataUri = doc.output("datauristring");
-        try { await enviarEmailAutomatico(pdfDataUri, hojeISO); } catch (err) {}
+      if (registros.length > 0) {
+        const doc = gerarRelatorioPDF(registros, hojeTexto);
+        if (doc) {
+          const pdfDataUri = doc.output("datauristring");
+          try { await enviarEmailAutomatico(pdfDataUri, hojeISO); } catch (err) {}
+        }
+      } else {
+        relatoriosEnviados[hojeISO] = true;
+        salvarRelatoriosEnviados();
       }
-    } else {
-      localStorage.setItem("ultimoRelatorioEnviado", hojeISO);
-    }
-  }, ms);
-}
+    }, ms);
+  }
 
 function checarExportacaoAutomaticaPDF() {
   const agora = new Date();
