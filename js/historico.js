@@ -59,15 +59,7 @@ if (window.emailjs) {
   emailjs.init(EMAILJS_PUBLIC_KEY);
 }
 
-let relatoriosEnviados = {};
-try {
-  relatoriosEnviados = JSON.parse(localStorage.getItem("relatoriosEnviados")) || {};
-} catch (e) {
-  relatoriosEnviados = {};
-}
 
-function salvarRelatoriosEnviados() {
-  localStorage.setItem("relatoriosEnviados", JSON.stringify(relatoriosEnviados));
 }
 
 function gerarRelatorioPDF(registros, dataRelatorio) {
@@ -153,8 +145,7 @@ function enviarEmail() {
   }).then(() => {
     alert("PDF enviado com sucesso!");
     const dataISO = dataTexto.split("/").reverse().join("-");
-    relatoriosEnviados[dataISO] = true;
-    salvarRelatoriosEnviados();
+
   }).catch(err => {
     console.error("Erro ao enviar PDF:", err);
     alert("Falha ao enviar o PDF.");
@@ -235,6 +226,9 @@ function agendarEnvioHoje() {
   if (ms <= 0) return;
   setTimeout(async () => {
     const hojeISO = new Date().toISOString().split("T")[0];
+    if (relatoriosEnviados.includes(hojeISO)) {
+      return;
+    }
     const hojeTexto = formatarData(new Date());
     const registros = bancoHistorico.filter(i => i.data === hojeTexto);
       if (registros.length > 0) {
