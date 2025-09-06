@@ -164,8 +164,26 @@ function enviarEmailAutomatico(pdfDataUri, data) {
   });
 }
 
+function horarioEntradaValido(horario) {
+  if (!horario) return false;
+  const partes = horario.split(":").map(Number);
+  if (partes.length < 2) return false;
+  const totalMin = partes[0] * 60 + partes[1];
+  const inicio = 7 * 60;
+  const fim = 23 * 60 + 59;
+  return totalMin >= inicio && totalMin <= fim;
+}
+
 // Processa e envia relatórios pendentes desde a última data enviada
 async function processarRelatoriosPendentes() {
+  const agora = new Date();
+  const inicio = new Date();
+  inicio.setHours(7, 0, 0, 0);
+  if (agora < inicio) {
+    setTimeout(processarRelatoriosPendentes, inicio.getTime() - agora.getTime());
+    return;
+  }
+
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
 
@@ -193,7 +211,7 @@ async function processarRelatoriosPendentes() {
   while (proxima <= ontem) {
     const dataISO = proxima.toISOString().split("T")[0];
     const dataTexto = formatarData(proxima);
-    const registros = bancoHistorico.filter(i => i.data === dataTexto);
+    const registros = bancoHistorico.filter(i => i.data === dataTexto && horarioEntradaValido(i.horarioEntrada));
     try {
       if (registros.length > 0) {
         const doc = gerarRelatorioPDF(registros, dataTexto);
@@ -222,7 +240,7 @@ function agendarEnvioHoje() {
   setTimeout(async () => {
     const hojeISO = new Date().toISOString().split("T")[0];
     const hojeTexto = formatarData(new Date());
-    const registros = bancoHistorico.filter(i => i.data === hojeTexto);
+    const registros = bancoHistorico.filter(i => i.data === hojeTexto && horarioEntradaValido(i.horarioEntrada));
     if (registros.length > 0) {
       const doc = gerarRelatorioPDF(registros, hojeTexto);
       if (doc) {
