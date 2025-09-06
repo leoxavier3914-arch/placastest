@@ -3,9 +3,11 @@ function atualizarTabelaAndamento() {
   const tbody = document.getElementById("tabelaAndamento");
   if (!tbody) return;
   tbody.innerHTML = "";
-  bancoHistorico.filter(h => h.status === "Em andamento").forEach(h => {
-    tbody.innerHTML += `<tr><td>${h.placa}</td><td>${h.nome}</td><td class="horaEntrada">${h.horarioEntrada}</td><td><button class="saida" onclick="marcarSaida('${h.placa}')">Saída</button></td></tr>`;
-  });
+  bancoHistorico
+    .filter(h => h.status === "Em andamento")
+    .forEach(h => {
+      tbody.innerHTML += `<tr><td>${h.placa}</td><td>${h.nome}</td><td class="horaEntrada">${h.horarioEntrada}</td><td><button class="saida" onclick="marcarSaida('${h.placa}')">Saída</button></td></tr>`;
+    });
 }
 
 function formatarData(d) {
@@ -337,18 +339,11 @@ function downloadLS(filename = "backup_localstorage.json") {
   URL.revokeObjectURL(url);
 }
 
-function criarBotaoExportLS() {
-  const btn = document.createElement("button");
-  btn.textContent = "Exportar LS";
-  btn.style = "padding:5px 10px; margin:5px; cursor:pointer; background:#2196F3; color:white; border:none; border-radius:5px;";
-  btn.addEventListener("click", () => {
-    downloadLS();
-    localStorage.setItem("lastLSBackup", Date.now().toString());
-    alert("Backup exportado!");
-  });
-  document.getElementById("historicoContainer").insertBefore(btn, null);
+function exportarLS() {
+  downloadLS();
+  localStorage.setItem("lastLSBackup", Date.now().toString());
+  alert("Backup exportado!");
 }
-criarBotaoExportLS();
 
 const importInput = document.createElement("input");
 importInput.type = "file";
@@ -356,12 +351,9 @@ importInput.accept = ".json";
 importInput.style.display = "none";
 document.body.appendChild(importInput);
 
-const importBtn = document.createElement("button");
-importBtn.textContent = "Importar LS";
-importBtn.style = "padding:5px 10px; margin:5px; cursor:pointer;";
-document.getElementById("historicoContainer").appendChild(importBtn);
-
-importBtn.addEventListener("click", () => importInput.click());
+function importarLS() {
+  importInput.click();
+}
 
 importInput.addEventListener("change", (event) => {
   const file = event.target.files[0];
@@ -404,6 +396,10 @@ window.converterDataInput = converterDataInput;
 window.filtrarHistorico = filtrarHistorico;
 window.exportarCSV = exportarCSV;
 window.exportarPDF = exportarPDF;
+window.exportarLS = exportarLS;
+window.importarLS = importarLS;
+window.downloadLS = downloadLS;
+window.exportLocalStorage = exportLocalStorage;
 
 
 window.enviarEmail = enviarEmail;
