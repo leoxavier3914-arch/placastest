@@ -81,9 +81,7 @@ async function sendEmail(pdfBuffer) {
 
 export async function runDailyEmail() {
   const filePath = new URL('../data/historico.json', import.meta.url);
-  const registros = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  const dataRelatorio = new Date().toLocaleDateString('pt-BR');
-  const pdf = await gerarRelatorioPDF(registros, dataRelatorio);
+
 
   await sendEmail(pdf);
   console.log('Daily email sent');
