@@ -21,7 +21,7 @@ table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: colla
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #f2f2f2; }
 
-/* Menu lateral e popup padrão (mantidos) */
+/* Menu lateral e popup padrão */
 .menu-btn { position: fixed; top: 10px; left: 10px; font-size: 30px; cursor: pointer; z-index: 1001; }
 .menu-content { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #333; overflow-x: hidden; transition: 0.3s; padding-top: 60px; z-index: 1000; }
 .menu-content a { padding: 10px 20px; text-decoration: none; display: block; color: white; font-weight: bold; }
@@ -43,9 +43,7 @@ th { background-color: #f2f2f2; }
   color: #2e4a39;
 }
 .aut-toolbar {
-  position: sticky;
-  top: 48px;      /* abaixo do botão do menu */
-  z-index: 5;
+  position: static;              /* não gruda ao rolar */
   padding: 8px 10px;
   background: #e8f5ec;
   border: 1px solid #cde8d6;
@@ -67,9 +65,9 @@ th { background-color: #f2f2f2; }
 
 /* Card */
 .aut-card {
-  background: #effaf3;               /* verde bem claro */
+  background: #effaf3;             /* verde bem claro */
   border: 1px solid #d2eddc;
-  border-left: 6px solid #3cb371;     /* destaque lateral */
+  border-left: 6px solid #3cb371;   /* destaque lateral */
   border-radius: 12px;
   padding: 12px;
   text-align: left;
@@ -81,20 +79,8 @@ th { background-color: #f2f2f2; }
   align-items: center;
   gap: 6px;
 }
-.aut-placa-badge {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: #3cb371;
-  color: #fff;
-  font-weight: 700;
-  letter-spacing: .5px;
-  font-size: 13px;
-}
-.aut-actions {
-  display: flex;
-  gap: 6px;
-}
+.aut-placa-badge { display: none; } /* placa vai para o "veja mais" */
+.aut-actions { display: flex; gap: 6px; }
 .aut-pill {
   border: none;
   border-radius: 999px;
@@ -126,25 +112,25 @@ th { background-color: #f2f2f2; }
   color: #1f2d26;
 }
 
-/* veja mais (modelo/cor) */
+/* Veja mais (Placa, Documento, Modelo, Cor) */
 .aut-more {
-  display:none;
-  margin-top:8px;
-  padding-top:8px;
-  border-top:1px dashed #cde8d6;
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #cde8d6;
 }
 .aut-more-btn {
-  background:#2e7d32;
-  border:none;
-  color:#fff;
-  font-weight:700;
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:12px;
-  margin-top:8px;
+  background: #2e7d32;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  margin-top: 8px;
 }
 
-/* formulário rápido */
+/* Formulário rápido */
 .aut-form {
   margin-top: 16px;
   background: #ffffff;
@@ -160,12 +146,12 @@ th { background-color: #f2f2f2; }
   color: #2e4a39;
 }
 
-/* ===== Popup de edição harmônico ===== */
+/* Popup de edição */
 .aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#2e4a39; }
 .aut-modal-grid{ display:grid; gap:10px; }
 .aut-input{ width:100%; padding:10px 12px; border:1px solid #c9dfd0; border-radius:8px; background:#fff; }
 .aut-modal .label{ display:block; font-size:11px; font-weight:700; color:#557a66; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
 .aut-modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
 .aut-btn{ border:none; border-radius:999px; padding:10px 14px; font-size:14px; font-weight:700; color:#fff; }
-.aut-btn.cancel{ background:#94a3b8; }   /* cinza azulado */
-.aut-btn.save{   background:#3cb371; }   /* verde do tema */
+.aut-btn.cancel{ background:#94a3b8; }
+.aut-btn.save{   background:#3cb371; }
