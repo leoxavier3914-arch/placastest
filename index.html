@@ -6,7 +6,9 @@
   <title>Controle de Placas</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2196F3">
+  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
+  <!-- libs opcionais já usadas no seu app -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -20,8 +22,8 @@
 </head>
 <body>
 
+<!-- botão/menu lateral (mantido) -->
 <div class="menu-btn" onclick="toggleMenu()">&#9776;</div>
-
 <div id="menu" class="menu-content">
   <a href="#" onclick="mostrarPagina('inicioContainer'); toggleMenu();">Início</a>
   <a href="#" onclick="mostrarPagina('cadastroContainer'); toggleMenu();">Cadastro</a>
@@ -30,6 +32,7 @@
   <a href="#" onclick="limparTudo(); toggleMenu();">Limpar Dados</a>
 </div>
 
+<!-- overlay/popup genéricos usados pelo Autorizados -->
 <div id="overlay" onclick="fecharPopup()"></div>
 <div id="popupCard">
   <button class="fecharBtn" onclick="fecharPopup()">×</button>
@@ -40,9 +43,11 @@
 <div id="inicioContainer">
   <h1>Controle de Placas</h1>
   <p>Digite a placa para verificar:</p>
-  <input type="text" id="placaInput" placeholder="Ex: ABC1234" maxlength="7" oninput="this.value = this.value.toUpperCase()">
+  <input type="text" id="placaInput" placeholder="Ex: ABC1234" maxlength="7"
+         oninput="this.value = this.value.toUpperCase()">
   <button onclick="verificarPlaca()">Verificar</button>
   <div id="mensagem"></div>
+
   <h2>Placas em andamento</h2>
   <table>
     <thead><tr><th>Placa</th><th>Nome</th><th>Entrada</th><th>Saída</th></tr></thead>
@@ -50,10 +55,10 @@
   </table>
 </div>
 
-<!-- CADASTROS -->
+<!-- CADASTROS (conteúdo original permanece) -->
 <div id="cadastroContainer">
   <h2>Cadastros</h2>
-  <!-- Conteúdo original de cadastros permanece aqui -->
+  <!-- ... seu conteúdo de cadastros aqui ... -->
 </div>
 
 <!-- AUTORIZADOS (NOVO LAYOUT) -->
@@ -61,14 +66,14 @@
   <h2 class="aut-header">Veículos Autorizados</h2>
 
   <div class="aut-toolbar">
-    <input type="text" id="pesquisaAut" placeholder="Pesquisar placa, nome ou autoridade...">
+    <input type="text" id="pesquisaAut" placeholder="Pesquisar por nome, placa ou autoridade...">
   </div>
 
   <div id="listaAutorizados" class="aut-lista"></div>
 
   <div class="aut-form">
     <h3>Novo autorizado</h3>
-    <input type="text" id="nomeAutInput" placeholder="Motorista (Nome)">
+    <input type="text" id="nomeAutInput" placeholder="Nome">
     <input type="text" id="placaAutInput" placeholder="Placa" maxlength="7" oninput="this.value=this.value.toUpperCase()">
     <input type="text" id="autoridadeAutInput" placeholder="Autoridade (Ex.: Segurança, Fiscal...)">
     <input type="text" id="rgcpfAutInput" placeholder="Documento (RG/CPF)">
@@ -78,7 +83,7 @@
   </div>
 </div>
 
-<!-- HISTÓRICO -->
+<!-- HISTÓRICO (mantido) -->
 <div id="historicoContainer">
   <h2>Histórico</h2>
   <label for="dataFiltro">Selecionar data:</label>
@@ -92,6 +97,7 @@
   <button onclick="importarLS()">Importar LS</button>
 </div>
 
+<!-- seus scripts existentes -->
 <script src="js/db.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/cadastros.js"></script>
