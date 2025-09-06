@@ -1,4 +1,4 @@
-/* Base */
+/* ===== BASE APP ===== */
 body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; padding: 20px; margin:0; }
 h1 { color: #333; margin-top: 50px; }
 input, select, button { padding: 10px; margin: 8px; width: 90%; max-width: 300px; border: 1px solid #ccc; border-radius: 5px; }
@@ -20,7 +20,7 @@ table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: colla
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #f2f2f2; }
 
-/* Menu lateral e popup padrão */
+/* MENU LATERAL E POPUP */
 .menu-btn { position: fixed; top: 10px; left: 10px; font-size: 30px; cursor: pointer; z-index: 1001; }
 .menu-content { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #333; overflow-x: hidden; transition: 0.3s; padding-top: 60px; z-index: 1000; }
 .menu-content a { padding: 10px 20px; text-decoration: none; display: block; color: white; font-weight: bold; }
@@ -39,7 +39,7 @@ th { background-color: #f2f2f2; }
 .aut-toolbar {
   position: static;
   padding: 8px 10px;
-  background: #e6f0fa;   /* azul bem claro */
+  background: #e6f0fa;
   border: 1px solid #c9def3;
   border-radius: 10px;
 }
@@ -53,27 +53,29 @@ th { background-color: #f2f2f2; }
 
 .aut-lista { margin-top: 12px; display: grid; gap: 10px; }
 
-/* Card */
 .aut-card {
-  background: #f0f6fc;               /* azul clarinho */
+  background: #f0f6fc;
   border: 1px solid #c9def3;
-  border-left: 6px solid #3b82f6;     /* azul médio (lateral) */
+  border-left: 6px solid #3b82f6;
   border-radius: 12px;
   padding: 12px;
   text-align: left;
   box-shadow: 0 2px 6px rgba(0,0,0,.06);
 }
+
 .aut-topline { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+
 .aut-placa-badge {
   display: inline-block;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #2563eb;   /* azul forte */
+  background: #2563eb;
   color: #fff;
   font-weight: 700;
   letter-spacing: .5px;
   font-size: 13px;
 }
+
 .aut-actions { display: flex; gap: 6px; }
 .aut-pill { border: none; border-radius: 999px; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #fff; }
 .aut-pill.edit { background: #2196F3; }
@@ -83,7 +85,7 @@ th { background-color: #f2f2f2; }
 .aut-field .label { display: block; font-size: 11px; font-weight: 700; color: #476282; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
 .aut-field .value { font-size: 14px; color: #1e293b; }
 
-/* Veja mais (Documento, Modelo, Cor) */
+/* Veja mais */
 .aut-more {
   display: none;
   margin-top: 8px;
@@ -91,7 +93,7 @@ th { background-color: #f2f2f2; }
   border-top: 1px dashed #c9def3;
 }
 .aut-more-btn {
-  background: #2563eb;  /* azul forte, mesmo da badge */
+  background: #2563eb;
   border: none;
   color: #fff;
   font-weight: 700;
@@ -121,4 +123,4 @@ th { background-color: #f2f2f2; }
 .aut-modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
 .aut-btn{ border:none; border-radius:999px; padding:10px 14px; font-size:14px; font-weight:700; color:#fff; }
 .aut-btn.cancel{ background:#94a3b8; }
-.aut-btn.save{   background:#2563eb; } /* botão salvar em azul */
+.aut-btn.save{   background:#2563eb; }
