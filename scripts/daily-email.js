@@ -50,5 +50,8 @@ export async function runDailyEmail() {
 
 // Allow manual execution: `node scripts/daily-email.js`
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runDailyEmail().catch((err) => console.error(err));
+  runDailyEmail().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
