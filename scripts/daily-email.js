@@ -1,4 +1,3 @@
-import cron from 'node-cron';
 import emailjs from '@emailjs/nodejs';
 import PDFDocument from 'pdfkit';
 
@@ -48,11 +47,6 @@ export async function runDailyEmail() {
   await sendEmail(pdf);
   console.log('Daily email sent');
 }
-
-// Schedule to run daily at 23:59
-cron.schedule('59 23 * * *', () => {
-  runDailyEmail().catch((err) => console.error('Failed to send daily email:', err));
-});
 
 // Allow manual execution: `node scripts/daily-email.js`
 if (import.meta.url === `file://${process.argv[1]}`) {
