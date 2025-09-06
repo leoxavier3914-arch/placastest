@@ -59,6 +59,9 @@ if (window.emailjs) {
   emailjs.init(EMAILJS_PUBLIC_KEY);
 }
 
+
+}
+
 function gerarRelatorioPDF(registros, dataRelatorio) {
   if (!window.jspdf || !window.jspdf.jsPDF) {
     alert("Biblioteca jsPDF não carregada!");
@@ -142,11 +145,34 @@ function enviarEmail() {
   }).then(() => {
     alert("PDF enviado com sucesso!");
     const dataISO = dataTexto.split("/").reverse().join("-");
-    localStorage.setItem("ultimoRelatorioEnviado", dataISO);
+
   }).catch(err => {
     console.error("Erro ao enviar PDF:", err);
     alert("Falha ao enviar o PDF.");
   });
+}
+
+// Gerencia fila de envios pendentes
+function obterPendenciasEnvio() {
+  return JSON.parse(localStorage.getItem("pendenciasEnvio") || "[]");
+}
+
+function salvarPendenciasEnvio(fila) {
+  localStorage.setItem("pendenciasEnvio", JSON.stringify(fila));
+}
+
+async function tentarEnviarPendencias() {
+  let fila = obterPendenciasEnvio();
+  while (fila.length > 0) {
+    const { pdfDataUri, dateISO } = fila.shift();
+    salvarPendenciasEnvio(fila);
+    try {
+      await enviarEmailAutomatico(pdfDataUri, dateISO);
+    } catch (err) {
+      break;
+    }
+    fila = obterPendenciasEnvio();
+  }
 }
 
 // Envia e-mail automaticamente utilizando um PDF já gerado
@@ -157,9 +183,13 @@ function enviarEmailAutomatico(pdfDataUri, data) {
     attachment: pdfDataUri
   }).then(() => {
     console.log(`Relatório de ${data} enviado automaticamente.`);
-    localStorage.setItem("ultimoRelatorioEnviado", data);
+    relatoriosEnviados[data] = true;
+    salvarRelatoriosEnviados();
   }).catch(err => {
     console.error(`Erro ao enviar relatório automático de ${data}:`, err);
+    const fila = obterPendenciasEnvio();
+    fila.push({ dateISO: data, pdfDataUri });
+    salvarPendenciasEnvio(fila);
     throw err;
   });
 }
@@ -176,54 +206,37 @@ function horarioEntradaValido(horario) {
 
 // Processa e envia relatórios pendentes desde a última data enviada
 async function processarRelatoriosPendentes() {
-  const agora = new Date();
-  const inicio = new Date();
-  inicio.setHours(7, 0, 0, 0);
-  if (agora < inicio) {
-    setTimeout(processarRelatoriosPendentes, inicio.getTime() - agora.getTime());
-    return;
-  }
+
 
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
+  let proxima = bancoHistorico.reduce((min, item) => {
+    const [d, m, a] = item.data.split("/").map(Number);
+    const dt = new Date(a, m - 1, d);
+    return (!min || dt < min) ? dt : min;
+  }, null);
 
-  const ultimoStr = localStorage.getItem("ultimoRelatorioEnviado");
-  let proxima;
-
-  if (ultimoStr) {
-    const ultimo = new Date(ultimoStr);
-    proxima = new Date(ultimo);
-    proxima.setDate(proxima.getDate() + 1);
-  } else {
-    // Busca a primeira data existente no histórico
-    proxima = bancoHistorico.reduce((min, item) => {
-      const [d, m, a] = item.data.split("/").map(Number);
-      const dt = new Date(a, m - 1, d);
-      return (!min || dt < min) ? dt : min;
-    }, null);
+  if (!proxima || proxima > ontem) {
+    agendarEnvioHoje();
+    return;
   }
 
-  if (!proxima) {
+  while (proxima <= ontem && relatoriosEnviados[proxima.toISOString().split("T")[0]]) {
+    proxima.setDate(proxima.getDate() + 1);
+  }
+
+  if (proxima > ontem) {
     agendarEnvioHoje();
     return;
   }
 
   while (proxima <= ontem) {
     const dataISO = proxima.toISOString().split("T")[0];
-    const dataTexto = formatarData(proxima);
-    const registros = bancoHistorico.filter(i => i.data === dataTexto && horarioEntradaValido(i.horarioEntrada));
-    try {
-      if (registros.length > 0) {
-        const doc = gerarRelatorioPDF(registros, dataTexto);
-        if (doc) {
-          const pdfDataUri = doc.output("datauristring");
-          await enviarEmailAutomatico(pdfDataUri, dataISO);
+
         }
-      } else {
-        localStorage.setItem("ultimoRelatorioEnviado", dataISO);
+      } catch (err) {
+        break;
       }
-    } catch (err) {
-      break;
     }
     proxima.setDate(proxima.getDate() + 1);
   }
@@ -238,20 +251,16 @@ function agendarEnvioHoje() {
   const ms = fimDia.getTime() - agora.getTime();
   if (ms <= 0) return;
   setTimeout(async () => {
+    await tentarEnviarPendencias();
     const hojeISO = new Date().toISOString().split("T")[0];
-    const hojeTexto = formatarData(new Date());
-    const registros = bancoHistorico.filter(i => i.data === hojeTexto && horarioEntradaValido(i.horarioEntrada));
-    if (registros.length > 0) {
-      const doc = gerarRelatorioPDF(registros, hojeTexto);
-      if (doc) {
-        const pdfDataUri = doc.output("datauristring");
-        try { await enviarEmailAutomatico(pdfDataUri, hojeISO); } catch (err) {}
-      }
-    } else {
-      localStorage.setItem("ultimoRelatorioEnviado", hojeISO);
+    if (relatoriosEnviados.includes(hojeISO)) {
+      return;
     }
-  }, ms);
-}
+    const hojeTexto = formatarData(new Date());
+
+      }
+    }, ms);
+  }
 
 function checarExportacaoAutomaticaPDF() {
   const agora = new Date();
