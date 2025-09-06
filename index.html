@@ -33,9 +33,11 @@
   <a href="#" onclick="limparTudo(); toggleMenu();">Limpar Dados</a>
 </div>
 
-<!-- POPUP GENÉRICO (usado pelo Editar em Autorizados) -->
-<div id="overlay" onclick="fecharPopup()"></div>
-<div id="popupCard">
+<!-- IMPORTANTE: estes elementos são do SEU app original (Popup global).
+     Se já existem no seu index, MANTENHA-OS e NÃO duplique. -->
+<div id="overlay" style="display:none;"></div>
+<div id="popupCard" style="display:none;">
+  <!-- o estilo/fechamento do popup GLOBAL é o que você já usa no app -->
   <button class="fecharBtn" onclick="fecharPopup()">×</button>
   <div id="popupConteudo"></div>
 </div>
@@ -62,7 +64,7 @@
   <!-- seu conteúdo de cadastros -->
 </div>
 
-<!-- AUTORIZADOS -->
+<!-- ========== AUTORIZADOS (isolado / popup próprio) ========== -->
 <div id="autorizadosContainer">
   <h2 class="aut-header">Veículos Autorizados</h2>
 
@@ -83,6 +85,14 @@
     <button class="entrada" onclick="adicionarAutorizado()">Adicionar</button>
   </div>
 </div>
+
+<!-- Popup EXCLUSIVO da página Autorizados -->
+<div id="aut-overlay" onclick="fecharAutPopup()"></div>
+<div id="aut-popupCard">
+  <button class="aut-fecharBtn" onclick="fecharAutPopup()">×</button>
+  <div id="aut-popupConteudo"></div>
+</div>
+<!-- =========================================================== -->
 
 <!-- HISTÓRICO -->
 <div id="historicoContainer">
