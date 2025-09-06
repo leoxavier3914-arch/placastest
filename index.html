@@ -17,8 +17,21 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then(() => {
+  navigator.serviceWorker.register('sw.js').then(async (registration) => {
     console.log('Service Worker registrado!');
+    if ('periodicSync' in registration) {
+      try {
+        const status = await navigator.permissions.query({ name: 'periodic-background-sync' });
+        if (status.state === 'granted') {
+          await registration.periodicSync.register('daily-email', {
+            minInterval: 24 * 60 * 60 * 1000,
+          });
+          console.log('Periodic Sync registrado!');
+        }
+      } catch (err) {
+        console.error('Erro ao registrar periodic sync', err);
+      }
+    }
   });
 }
 </script>
