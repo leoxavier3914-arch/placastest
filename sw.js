@@ -36,7 +36,7 @@ async function enviarEmailDiario() {
     const pdfDataUri = doc.output('datauristring');
 
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-      to_email: 'seu-email@example.com',
+      to_email: 'leomatos3914@gmail.com',
       message: 'Envio automático diário',
       attachment: pdfDataUri,
     });
