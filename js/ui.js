@@ -29,7 +29,9 @@ function limparTudo() {
   if (senha === "1234") {
     if (confirm("Deseja realmente limpar o histórico e mensagens?")) {
       bancoHistorico = [];
-      localStorage.setItem("bancoHistorico", JSON.stringify(bancoHistorico));
+      window.bancoHistorico = bancoHistorico;
+      rebuildHistoricoMap();
+      salvarBanco();
       document.getElementById("mensagem").innerHTML = "";
       atualizarTabelaAndamento();
       filtrarHistorico();
