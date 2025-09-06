@@ -1,19 +1,56 @@
 import emailjs from '@emailjs/nodejs';
 import PDFDocument from 'pdfkit';
+import fs from 'fs';
 
 /**
- * Generate a simple PDF buffer.
- * @returns {Promise<Buffer>} A buffer containing the PDF data.
+ * Gera um PDF com os registros do histórico.
+ * @param {Array} registros Lista de objetos do histórico
+ * @param {string} dataRelatorio Texto da data exibida no cabeçalho
+ * @returns {Promise<Buffer>} Buffer contendo os dados do PDF
  */
-function generatePdf() {
+function gerarRelatorioPDF(registros, dataRelatorio) {
   return new Promise((resolve, reject) => {
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ margin: 30 });
     const buffers = [];
-    doc.on('data', (data) => buffers.push(data));
+    doc.on('data', (d) => buffers.push(d));
     doc.on('end', () => resolve(Buffer.concat(buffers)));
     doc.on('error', reject);
 
-    doc.fontSize(20).text('Relatório diário', { align: 'center' });
+    const headers = ['Placa', 'Nome', 'Tipo', 'RG/CPF', 'Status', 'Entrada', 'Saída'];
+    const colWidths = [60, 100, 60, 80, 60, 60, 60];
+
+    doc.fontSize(16).text('Empresa XYZ', { align: 'center' });
+    doc.fontSize(12).text(`Data do relatório: ${dataRelatorio}`, { align: 'center' });
+    doc.moveDown();
+
+    let x = doc.page.margins.left;
+    let y = doc.y;
+    doc.fontSize(10);
+
+    headers.forEach((h, i) => {
+      doc.text(h, x, y, { width: colWidths[i], align: 'left' });
+      x += colWidths[i];
+    });
+
+    y += 20;
+    registros.forEach((reg) => {
+      x = doc.page.margins.left;
+      const row = [
+        reg.placa,
+        reg.nome,
+        reg.tipo,
+        reg.rgcpf,
+        reg.status,
+        reg.horarioEntrada || '-',
+        reg.horarioSaida || '-',
+      ];
+      row.forEach((cell, i) => {
+        doc.text(String(cell), x, y, { width: colWidths[i], align: 'left' });
+        x += colWidths[i];
+      });
+      y += 20;
+    });
+
     doc.end();
   });
 }
@@ -43,18 +80,10 @@ async function sendEmail(pdfBuffer) {
 }
 
 export async function runDailyEmail() {
-  let pdf;
-  if (process.env.HISTORY_PDF_URL) {
-    const res = await fetch(process.env.HISTORY_PDF_URL);
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch HISTORY_PDF_URL: ${res.status} ${res.statusText}`
-      );
-    }
-    pdf = Buffer.from(await res.arrayBuffer());
-  } else {
-    pdf = await generatePdf();
-  }
+  const filePath = new URL('../data/historico.json', import.meta.url);
+  const registros = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+  const dataRelatorio = new Date().toLocaleDateString('pt-BR');
+  const pdf = await gerarRelatorioPDF(registros, dataRelatorio);
 
   await sendEmail(pdf);
   console.log('Daily email sent');

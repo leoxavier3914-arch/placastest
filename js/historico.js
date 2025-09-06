@@ -259,3 +259,45 @@ window.exportarPDF = exportarPDF;
 window.enviarEmail = enviarEmail;
 
 window.checarExportacaoAutomaticaPDF = checarExportacaoAutomaticaPDF;
+
+// Salva o histórico no repositório GitHub usando a API de Contents
+// token  - token pessoal do GitHub com permissão de commit
+// owner  - nome do usuário/organização
+// repo   - nome do repositório
+async function salvarHistoricoGitHub(token, owner, repo) {
+  if (!token || !owner || !repo) {
+    alert("Parâmetros inválidos para salvar no GitHub");
+    return;
+  }
+
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/data/historico.json`;
+  const headers = {
+    "Authorization": `Bearer ${token}`,
+    "Accept": "application/vnd.github+json",
+    "Content-Type": "application/json"
+  };
+
+  // Converte o histórico para Base64
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(bancoHistorico, null, 2))));
+
+  let sha;
+  // Busca o SHA do arquivo existente, caso já exista
+  const getRes = await fetch(url, { headers });
+  if (getRes.ok) {
+    const data = await getRes.json();
+    sha = data.sha;
+  }
+
+  const body = { message: "Atualiza histórico", content, sha };
+  const putRes = await fetch(url, { method: "PUT", headers, body: JSON.stringify(body) });
+  if (!putRes.ok) {
+    const text = await putRes.text();
+    console.error("Falha ao atualizar histórico:", putRes.status, text);
+    alert("Erro ao salvar histórico no GitHub");
+    return;
+  }
+
+  alert("Histórico salvo no GitHub!");
+}
+
+window.salvarHistoricoGitHub = salvarHistoricoGitHub;
