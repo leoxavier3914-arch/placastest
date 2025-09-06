@@ -25,11 +25,10 @@ function adicionarAutorizado() {
   if (!nome || !placa || !rgcpf) { alert("Preencha todos os campos!"); return; }
 
   bancoAutorizados.push({ nome, placa, rgcpf });
-  // persista no LS se você usa:
   try { localStorage.setItem("bancoAutorizados", JSON.stringify(bancoAutorizados)); } catch (e) {}
 
   limparFormAut();
-  pesquisarAutorizados(); // atualiza com o filtro atual (se houver)
+  pesquisarAutorizados();
   alert("Autorizado adicionado!");
 }
 
@@ -70,7 +69,6 @@ function iniciarEdicaoAut() {
 }
 
 function confirmarEdicaoAut() {
-  // Mantido para compatibilidade com chamadas antigas (se existirem)
   iniciarEdicaoAut();
 }
 
@@ -171,7 +169,6 @@ function pesquisarAutorizados() {
   atualizarAutorizados(termo);
 }
 
-// garante que o campo de busca esteja pronto antes de anexar o evento
 document.addEventListener("DOMContentLoaded", () => {
   const campoPesquisa = document.getElementById("pesquisaAut");
   if (campoPesquisa) {
