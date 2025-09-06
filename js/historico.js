@@ -63,6 +63,15 @@ if (window.emailjs) {
 }
 
 
+// Armazena a data do último relatório enviado automaticamente
+let ultimoRelatorioEnviado = localStorage.getItem("ultimoRelatorioEnviado") || null;
+
+function salvarUltimoRelatorioEnviado(data) {
+  ultimoRelatorioEnviado = data;
+  localStorage.setItem("ultimoRelatorioEnviado", data);
+}
+
+
 }
 
 function gerarRelatorioPDF(registros, dataRelatorio) {
@@ -189,6 +198,7 @@ function enviarEmailAutomatico(pdfDataUri, data) {
     console.log(`Relatório de ${data} enviado automaticamente.`);
     relatoriosEnviados[data] = true;
     salvarRelatoriosEnviados();
+    salvarUltimoRelatorioEnviado(data);
   }).catch(err => {
     console.error(`Erro ao enviar relatório automático de ${data}:`, err);
     const fila = obterPendenciasEnvio();
