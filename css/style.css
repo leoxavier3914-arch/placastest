@@ -10,7 +10,6 @@ button { color: white; border: none; cursor: pointer; background: #4CAF50; }
 .lista { margin-top:20px; }
 .item { border-bottom:1px solid #ddd; padding:8px; text-align:left; }
 
-/* containers de páginas (app troca display via JS) */
 #historicoContainer, #cadastroContainer, #autorizadosContainer, #inicioContainer { display:none; }
 
 .horaEntrada { color: green; font-weight: bold; }
@@ -34,20 +33,20 @@ th { background-color: #f2f2f2; }
 
 #exportBtn { background-color: #2196F3; }
 
-/* ====== AUTORIZADOS (look do print) ====== */
-.aut-header { margin-top: 12px; margin-bottom: 8px; font-size: 18px; font-weight: 700; color: #2e4a39; }
+/* ====== AUTORIZADOS (paleta azul) ====== */
+.aut-header { margin-top: 12px; margin-bottom: 8px; font-size: 18px; font-weight: 700; color: #1e3a5f; }
 
 .aut-toolbar {
-  position: static;              /* não gruda ao rolar */
+  position: static;
   padding: 8px 10px;
-  background: #e8f5ec;
-  border: 1px solid #cde8d6;
+  background: #e6f0fa;   /* azul bem claro */
+  border: 1px solid #c9def3;
   border-radius: 10px;
 }
 .aut-toolbar input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #c9dfd0;
+  border: 1px solid #c9def3;
   border-radius: 8px;
   background: #fff;
 }
@@ -56,9 +55,9 @@ th { background-color: #f2f2f2; }
 
 /* Card */
 .aut-card {
-  background: #effaf3;               /* verde bem claro */
-  border: 1px solid #d2eddc;
-  border-left: 6px solid #3cb371;     /* destaque lateral */
+  background: #f0f6fc;               /* azul clarinho */
+  border: 1px solid #c9def3;
+  border-left: 6px solid #3b82f6;     /* azul médio (lateral) */
   border-radius: 12px;
   padding: 12px;
   text-align: left;
@@ -66,10 +65,10 @@ th { background-color: #f2f2f2; }
 }
 .aut-topline { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .aut-placa-badge {
-  display: inline-block;               /* VOLTOU a aparecer */
+  display: inline-block;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #3cb371;
+  background: #2563eb;   /* azul forte */
   color: #fff;
   font-weight: 700;
   letter-spacing: .5px;
@@ -81,18 +80,18 @@ th { background-color: #f2f2f2; }
 .aut-pill.del  { background: #f44336; }
 
 .aut-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
-.aut-field .label { display: block; font-size: 11px; font-weight: 700; color: #557a66; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
-.aut-field .value { font-size: 14px; color: #1f2d26; }
+.aut-field .label { display: block; font-size: 11px; font-weight: 700; color: #476282; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+.aut-field .value { font-size: 14px; color: #1e293b; }
 
 /* Veja mais (Documento, Modelo, Cor) */
 .aut-more {
   display: none;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px dashed #cde8d6;
+  border-top: 1px dashed #c9def3;
 }
 .aut-more-btn {
-  background: #2e7d32;
+  background: #2563eb;  /* azul forte, mesmo da badge */
   border: none;
   color: #fff;
   font-weight: 700;
@@ -112,14 +111,14 @@ th { background-color: #f2f2f2; }
   text-align: left;
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
-.aut-form h3 { margin: 0 0 6px 0; font-size: 15px; color: #2e4a39; }
+.aut-form h3 { margin: 0 0 6px 0; font-size: 15px; color: #1e3a5f; }
 
 /* Popup de edição */
-.aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#2e4a39; }
+.aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#1e3a5f; }
 .aut-modal-grid{ display:grid; gap:10px; }
-.aut-input{ width:100%; padding:10px 12px; border:1px solid #c9dfd0; border-radius:8px; background:#fff; }
-.aut-modal .label{ display:block; font-size:11px; font-weight:700; color:#557a66; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+.aut-input{ width:100%; padding:10px 12px; border:1px solid #c9def3; border-radius:8px; background:#fff; }
+.aut-modal .label{ display:block; font-size:11px; font-weight:700; color:#476282; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
 .aut-modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
 .aut-btn{ border:none; border-radius:999px; padding:10px 14px; font-size:14px; font-weight:700; color:#fff; }
 .aut-btn.cancel{ background:#94a3b8; }
-.aut-btn.save{   background:#3cb371; }
+.aut-btn.save{   background:#2563eb; } /* botão salvar em azul */
