@@ -43,7 +43,19 @@ async function sendEmail(pdfBuffer) {
 }
 
 export async function runDailyEmail() {
-  const pdf = await generatePdf();
+  let pdf;
+  if (process.env.HISTORY_PDF_URL) {
+    const res = await fetch(process.env.HISTORY_PDF_URL);
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch HISTORY_PDF_URL: ${res.status} ${res.statusText}`
+      );
+    }
+    pdf = Buffer.from(await res.arrayBuffer());
+  } else {
+    pdf = await generatePdf();
+  }
+
   await sendEmail(pdf);
   console.log('Daily email sent');
 }

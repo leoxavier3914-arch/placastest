@@ -21,3 +21,4 @@ jobs:
           EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
           EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
           EMAILJS_RECIPIENTS: ${{ secrets.EMAILJS_RECIPIENTS }}
+          HISTORY_PDF_URL: ${{ secrets.HISTORY_PDF_URL }}
