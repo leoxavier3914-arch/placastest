@@ -1,4 +1,4 @@
-/* Base (mantém seu layout) */
+/* Base */
 body { font-family: Arial, sans-serif; background: #f4f4f9; text-align: center; padding: 20px; margin:0; }
 h1 { color: #333; margin-top: 50px; }
 input, select, button { padding: 10px; margin: 8px; width: 90%; max-width: 300px; border: 1px solid #ccc; border-radius: 5px; }
@@ -10,6 +10,7 @@ button { color: white; border: none; cursor: pointer; background: #4CAF50; }
 .lista { margin-top:20px; }
 .item { border-bottom:1px solid #ddd; padding:8px; text-align:left; }
 
+/* containers de páginas (app troca display via JS) */
 #historicoContainer, #cadastroContainer, #autorizadosContainer, #inicioContainer { display:none; }
 
 .horaEntrada { color: green; font-weight: bold; }
@@ -20,7 +21,7 @@ table { width: 100%; max-width: 600px; margin: 20px auto; border-collapse: colla
 th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
 th { background-color: #f2f2f2; }
 
-/* Menu lateral e popup (mantidos) */
+/* Menu lateral e popup padrão (mantidos) */
 .menu-btn { position: fixed; top: 10px; left: 10px; font-size: 30px; cursor: pointer; z-index: 1001; }
 .menu-content { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: #333; overflow-x: hidden; transition: 0.3s; padding-top: 60px; z-index: 1000; }
 .menu-content a { padding: 10px 20px; text-decoration: none; display: block; color: white; font-weight: bold; }
@@ -33,17 +34,7 @@ th { background-color: #f2f2f2; }
 
 #exportBtn { background-color: #2196F3; }
 
-/* ======== BLOCO LEGADO DA LISTA DE AUTORIZADOS (mantido para compat) ======== */
-#listaAutorizados { margin-top: 20px; }
-#listaAutorizados .item { padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; cursor: pointer; position: relative; }
-.item.selecionado { border: 2px solid #4CAF50; border-radius: 5px; background-color: #e0f7e0; }
-.item .menuSerra { display: none; position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; font-weight: bold; font-size: 18px; }
-.item.selecionado .menuSerra { display: block; }
-.item .submenu { display: none; position: absolute; top: 50%; right: 14px; transform: translateY(-50%); background: white; border: 1px solid #ccc; border-radius: 5px; z-index: 1000; min-width: 100px; }
-.item .submenu div { padding: 5px 10px; cursor: pointer; }
-.item .submenu div:hover { background-color: #f2f2f2; }
-
-/* ====== AUTORIZADOS (look parecido com o print) ====== */
+/* ====== AUTORIZADOS (look do print) ====== */
 .aut-header {
   margin-top: 12px;
   margin-bottom: 8px;
@@ -51,17 +42,15 @@ th { background-color: #f2f2f2; }
   font-weight: 700;
   color: #2e4a39;
 }
-
 .aut-toolbar {
   position: sticky;
-  top: 48px;        /* fica abaixo do botão do menu */
+  top: 48px;      /* abaixo do botão do menu */
   z-index: 5;
   padding: 8px 10px;
   background: #e8f5ec;
   border: 1px solid #cde8d6;
   border-radius: 10px;
 }
-
 .aut-toolbar input {
   width: 100%;
   padding: 10px 12px;
@@ -78,22 +67,20 @@ th { background-color: #f2f2f2; }
 
 /* Card */
 .aut-card {
-  background: #effaf3;             /* verde bem claro */
+  background: #effaf3;               /* verde bem claro */
   border: 1px solid #d2eddc;
-  border-left: 6px solid #3cb371;   /* destaque lateral */
+  border-left: 6px solid #3cb371;     /* destaque lateral */
   border-radius: 12px;
   padding: 12px;
   text-align: left;
   box-shadow: 0 2px 6px rgba(0,0,0,.06);
 }
-
 .aut-topline {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 6px;
 }
-
 .aut-placa-badge {
   display: inline-block;
   padding: 6px 10px;
@@ -104,12 +91,10 @@ th { background-color: #f2f2f2; }
   letter-spacing: .5px;
   font-size: 13px;
 }
-
 .aut-actions {
   display: flex;
   gap: 6px;
 }
-
 .aut-pill {
   border: none;
   border-radius: 999px;
@@ -118,7 +103,6 @@ th { background-color: #f2f2f2; }
   font-weight: 600;
   color: #fff;
 }
-
 .aut-pill.edit { background: #2196F3; }
 .aut-pill.del  { background: #f44336; }
 
@@ -128,7 +112,6 @@ th { background-color: #f2f2f2; }
   gap: 6px;
   margin-top: 10px;
 }
-
 .aut-field .label {
   display: block;
   font-size: 11px;
@@ -138,10 +121,27 @@ th { background-color: #f2f2f2; }
   letter-spacing: .4px;
   margin-bottom: 2px;
 }
-
 .aut-field .value {
   font-size: 14px;
   color: #1f2d26;
+}
+
+/* veja mais (modelo/cor) */
+.aut-more {
+  display:none;
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px dashed #cde8d6;
+}
+.aut-more-btn {
+  background:#2e7d32;
+  border:none;
+  color:#fff;
+  font-weight:700;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  margin-top:8px;
 }
 
 /* formulário rápido */
@@ -154,9 +154,18 @@ th { background-color: #f2f2f2; }
   text-align: left;
   box-shadow: 0 1px 4px rgba(0,0,0,.06);
 }
-
 .aut-form h3 {
   margin: 0 0 6px 0;
   font-size: 15px;
   color: #2e4a39;
 }
+
+/* ===== Popup de edição harmônico ===== */
+.aut-modal h3{ margin:0 0 10px 0; font-size:18px; color:#2e4a39; }
+.aut-modal-grid{ display:grid; gap:10px; }
+.aut-input{ width:100%; padding:10px 12px; border:1px solid #c9dfd0; border-radius:8px; background:#fff; }
+.aut-modal .label{ display:block; font-size:11px; font-weight:700; color:#557a66; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
+.aut-modal-actions{ display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+.aut-btn{ border:none; border-radius:999px; padding:10px 14px; font-size:14px; font-weight:700; color:#fff; }
+.aut-btn.cancel{ background:#94a3b8; }   /* cinza azulado */
+.aut-btn.save{   background:#3cb371; }   /* verde do tema */
