@@ -194,9 +194,19 @@ function enviarEmailAutomatico(pdfDataUri, data) {
   });
 }
 
+function horarioEntradaValido(horario) {
+  if (!horario) return false;
+  const partes = horario.split(":").map(Number);
+  if (partes.length < 2) return false;
+  const totalMin = partes[0] * 60 + partes[1];
+  const inicio = 7 * 60;
+  const fim = 23 * 60 + 59;
+  return totalMin >= inicio && totalMin <= fim;
+}
+
 // Processa e envia relatórios pendentes desde a última data enviada
 async function processarRelatoriosPendentes() {
-  await tentarEnviarPendencias();
+
 
   const ontem = new Date();
   ontem.setDate(ontem.getDate() - 1);
@@ -247,7 +257,6 @@ function agendarEnvioHoje() {
       return;
     }
     const hojeTexto = formatarData(new Date());
-    const registros = bancoHistorico.filter(i => i.data === hojeTexto);
 
       }
     }, ms);
